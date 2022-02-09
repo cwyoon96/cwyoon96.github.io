@@ -5,26 +5,26 @@
   Free for personal and commercial use under the MIT license
   https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
 -->
-<html lang="en" class="no-js">
+<html lang="ko" class="no-js">
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Posts by Tag - Site Title</title>
-<meta name="description" content="An amazing website.">
+<!-- begin _includes/seo.html --><title>Posts by Tag | Statistics and Machine Learning Lab by cwyoon96</title>
+<meta name="description" content="통계학 그리고 머신러닝 공부 내용을 정리하는 블로그입니다.">
 
 
-  <meta name="author" content="Your Name">
+  <meta name="author" content="cwyoon96">
   
 
 
 <meta property="og:type" content="website">
-<meta property="og:locale" content="en_US">
-<meta property="og:site_name" content="Site Title">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Statistics and Machine Learning Lab by cwyoon96">
 <meta property="og:title" content="Posts by Tag">
 <meta property="og:url" content="http://localhost:4000/tags/">
 
 
-  <meta property="og:description" content="An amazing website.">
+  <meta property="og:description" content="통계학 그리고 머신러닝 공부 내용을 정리하는 블로그입니다.">
 
 
 
@@ -51,7 +51,7 @@
     "@context": "https://schema.org",
     
       "@type": "Person",
-      "name": "Your Name",
+      "name": "cwyoon96",
       "url": "http://localhost:4000/"
     
   }
@@ -66,8 +66,33 @@
 <!-- end _includes/seo.html -->
 
 
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
 
-  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Site Title Feed">
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Statistics and Machine Learning Lab by cwyoon96 Feed">
 
 
 <!-- https://t.co/dKP3o1e -->
@@ -113,7 +138,7 @@
       <nav id="site-nav" class="greedy-nav">
         
         <a class="site-title" href="/">
-          Site Title
+          Statistics and Machine Learning Lab by cwyoon96
           
         </a>
         <ul class="visible-links"><li class="masthead__menu-item">
@@ -125,7 +150,7 @@
             </li></ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
-          <span class="visually-hidden">Toggle menu</span>
+          <span class="visually-hidden">토글 메뉴</span>
           <div class="navicon"></div>
         </button>
         <ul class="hidden-links hidden"></ul>
@@ -152,22 +177,22 @@
 
   <div class="author__content">
     <h3 class="author__name p-name" itemprop="name">
-      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Your Name</a>
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">cwyoon96</a>
     </h3>
     
       <div class="author__bio p-note" itemprop="description">
-        <p>I am an <strong>amazing</strong> person.</p>
+        <p>통계학 그리고 머신러닝을 공부하는 사람입니다.</p>
 
       </div>
     
   </div>
 
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">Follow</button>
+    <button class="btn btn--inverse">팔로우</button>
     <ul class="author__urls social-icons">
       
         <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
-          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Somewhere</span>
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Daejeon, South Korea</span>
         </li>
       
 
@@ -181,6 +206,8 @@
         
           
         
+          
+            <li><a href="https://github.com/cwyoon96" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
           
         
           
@@ -262,9 +289,129 @@
 
 <ul class="taxonomy__index">
   
+    
+      
+        <li>
+          <a href="#machine-learning">
+            <strong>Machine Learning</strong> <span class="taxonomy__count">1</span>
+          </a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="#prml">
+            <strong>PRML</strong> <span class="taxonomy__count">1</span>
+          </a>
+        </li>
+      
+    
+  
 </ul>
 
 
+
+  
+    
+      <section id="machine-learning" class="taxonomy__section">
+        <h2 class="archive__subtitle">Machine Learning</h2>
+        <div class="entries-list">
+          
+            
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-2-1/" rel="permalink">PRML 스터디 Chap.2 (1)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)
+</p>
+  </article>
+</div>
+
+          
+        </div>
+        <a href="#page-title" class="back-to-top">맨 위로 이동 &uarr;</a>
+      </section>
+    
+  
+    
+      <section id="prml" class="taxonomy__section">
+        <h2 class="archive__subtitle">PRML</h2>
+        <div class="entries-list">
+          
+            
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-2-1/" rel="permalink">PRML 스터디 Chap.2 (1)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)
+</p>
+  </article>
+</div>
+
+          
+        </div>
+        <a href="#page-title" class="back-to-top">맨 위로 이동 &uarr;</a>
+      </section>
+    
+  
 
 
   </div>
@@ -281,7 +428,7 @@
         <div class="page__footer-follow">
   <ul class="social-icons">
     
-      <li><strong>Follow:</strong></li>
+      <li><strong>팔로우:</strong></li>
     
 
     
@@ -301,12 +448,12 @@
     
 
     
-      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
     
   </ul>
 </div>
 
-<div class="page__footer-copyright">&copy; 2022 Your Name. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+<div class="page__footer-copyright">&copy; 2022 cwyoon96. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
 
       </footer>
     </div>

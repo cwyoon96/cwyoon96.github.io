@@ -1,0 +1,591 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>PRML 스터디 Chap.2 (1) | Statistics and Machine Learning Lab by cwyoon96</title>
+<meta name="description" content="(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)">
+
+
+  <meta name="author" content="cwyoon96">
+  
+  <meta property="article:author" content="cwyoon96">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Statistics and Machine Learning Lab by cwyoon96">
+<meta property="og:title" content="PRML 스터디 Chap.2 (1)">
+<meta property="og:url" content="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-2-1/">
+
+
+  <meta property="og:description" content="(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-09-11T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-2-1/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "cwyoon96",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Statistics and Machine Learning Lab by cwyoon96 Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Statistics and Machine Learning Lab by cwyoon96
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">cwyoon96</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>통계학 그리고 머신러닝을 공부하는 사람입니다.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Daejeon, South Korea</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/cwyoon96" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="PRML 스터디 Chap.2 (1)">
+    <meta itemprop="description" content="(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)">
+    <meta itemprop="datePublished" content="2021-09-11T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-2-1/" class="u-url" itemprop="url">PRML 스터디 Chap.2 (1)
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#21-binary-variables">2.1 Binary Variables</a><ul><li><a href="#bernoulli-distribution">Bernoulli Distribution</a></li><li><a href="#211-beta-distribution">2.1.1 Beta Distribution</a></li></ul></li><li><a href="#22-multinomial-variables">2.2 Multinomial Variables</a><ul><li><a href="#221-dirichlet-distribution">2.2.1 Dirichlet distribution</a></li></ul></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)</p>
+
+<p>PRML의 Chap.2 에서는 통계학에서 그리고 머신러닝에서 많이 쓰이는 여러 확률분포에 대한 내용을 다루고 있다.</p>
+
+<h2 id="21-binary-variables">2.1 Binary Variables</h2>
+
+<p>먼저, Binary Variable을 설명하기 위한 확률 분포들이다. Binary Random Variable이란 결과가 0 혹은 1 과 같이 둘 중 하나로 정해지는 Variable을 의미한다. 대표적으로 동전던지기 시행을 생각할 수 있다.</p>
+
+<h3 id="bernoulli-distribution">Bernoulli Distribution</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Bernoulli 분포는 위에서 말한 것처럼, 결과가 두개의 경우의 수로만 나오는 Single Binary Variable을 설명하기 위한 분포이다. 편의를 위해 r.v. (random variable) $x$가 0 과 1의 값만 가질 수 있다고 해보자. 이때 $x = 1$ 일 확률을 $p$ 라고 한다면, $x$는 $Ber(x</td>
+      <td>p) = p^x(1-p)^{1-x}$ 의 p.d.f. 를 가지게 될 것이며, 이러한 확률분포를 베르누이 분포라고 한다. 단순한 계산을 통해, 그리고 직관적으로도</td>
+    </tr>
+  </tbody>
+</table>
+
+\[\begin{aligned}E(x) &amp;= p \\ var(x) &amp;= p(1-p)\end{aligned}\]
+
+<p>가 됨을 알 수 있다.</p>
+
+<p>시행을 여러번 반복했다면 독립적인 베르누이 r.v.를 여러개 가질 수 있을 것이고, 이를 통해 MLE를 찾는 것이 가능하다. 이때, likelihood function은 p.d.f.의 곱으로 나타날 것이다.</p>
+
+\[P(\mathbf{x}|p) = \prod_{i=1}^N p^{x_i}(1-p)^{1-x_i}\]
+
+<p>이후, 편리한 계산을 위해 양쪽에 log를 씌어주고 (이 과정에서 $\sum_{i=1}^{N}x_i$ 가 factorization thm에 따라 sufficient statistics 임을 알 수 있다.), MLE를 계산하면 $\hat{p} = \cfrac{\sum_{i=1}^{N}x_i}{N}$ 가 됨을 알 수 있다. 즉, Sample Mean이 MLE가 되는 것이다.</p>
+
+<p>자, 이제 독립적인 베르누이 시행을 N번 실행했다고 가정해보자. 우린 N번의 시행 중 1이 몇번 나왔는지에 대한 r.v.를 생각할 수 있다. 이러한 r.v.를 Binomial r.v.라고 하고, 1이 나온 횟수를 n 이라고 하면 Binomial Distribution의 p.d.f.는</p>
+
+\[Bin(n|N,p) = \begin{pmatrix} N \\ n \end{pmatrix}p^{n}(1-p)^{1-n}\]
+
+<p>가 된다. 이를 해석하면, 전체 N번 시행 중 n번 1이 나올 수 있는 모든 경우의 수를 그 확률값과 곱해준 형식이 된다.</p>
+
+<p>또한, 대의적 정의에 따라 $x_1,…,x_N \overset{iid}\sim Ber(p)$ 라고 한다면, $X = \sum{x_i} \sim Bin(N,p)$ 임을 알 수 있다. 이를 이용해서든 혹은 평균과 분산의 정의를 이용해서든</p>
+
+\[\begin {aligned} E(X) &amp;= Np \\ var(X) &amp;= Np(1-p) \end {aligned}\]
+
+<p>임을 쉽게 알 수 있다.</p>
+
+<h3 id="211-beta-distribution">2.1.1 Beta Distribution</h3>
+
+<p>Beta Distribution은 사실 continuous r.v. 를 위한 확률분포이다. 하지만, Beta 분포가 지금 소개되는 것은 Beta 분포는 베이지안의 관점에서 Binomial 분포의 conjugate distribution이기 때문이다. 즉, Binomial에서의 모수 $p$의 prior distribution이 Beta 분포를 따른다고 보는 것이다. conjugate distribution을 정하는데에는 크게 2가지 조건이 존재한다.</p>
+
+<ol>
+  <li>prior distribution의 support space가 모수의 support spcae와 동일하다</li>
+  <li>prior distribution의 p.d.f. form이 likelihood function의 form과 유사하다.</li>
+</ol>
+
+<p>첫번째 조건은 prior distribution의 정의를 생각해보면 당연한 것이고, 2번째 조건은 계산의 편의성을 위한 조건이다.</p>
+
+<p>그럼 Beta 분포의 p.d.f.를 살펴보면서 위 2가지 조건을 만족하는지 살펴보자. prior의 의미를 살리기 위해 $p \sim Beta(a,b)$라고 한다면 그 p.d.f.는</p>
+
+\[Beta(p|a,b) = \cfrac{\Gamma{(a+b)}}{\Gamma(a)\Gamma{(b)}}p^{a-1}(1-p)^{b-1}\]
+
+<table>
+  <tbody>
+    <tr>
+      <td>로 주어진다. 이때, $p$의 범위는 0~1 사이가 되며, p.d.f.의 정의에 따라 당연히 $\int_{0}^{1}Beta(p</td>
+      <td>a,b) = 1$ 을 만족한다. Binomial 분포의 p.d.f.를 생각해보면 2번 조건 또한 만족됨을 생각할 수 있다. 또한, p.d.f.로 부터</td>
+    </tr>
+  </tbody>
+</table>
+
+\[\begin {aligned} E(p) &amp;= \cfrac{a}{a+b} \\ var(p) &amp;= \cfrac{ab}{(a+b)^2(a+b+1)} \end {aligned}\]
+
+<p>임을 알 수 있다. 여기서 a와 b는 hyperparameter로, a와 b의 선택에 따라 Beta 분포는 다양한 모습을 갖게 된다. 참고로, a=1, b=1을 선택하면 U(0,1)과 같은 분포를 가지게 된다.</p>
+
+<p>그럼, $p$의 posterior distribution을 구하기 위해 beta prior distribution과 binomial likelihood function을 곱해보자. constant 항을 제외하고 관심이 있는 $p$ 만 생각하면,</p>
+
+\[P(p|n,m,a,b) \propto p^{n+a-1}(1-p)^{m+b-1}\]
+
+<p>임을 알 수 있다. (여기서 $m = N-n$ 즉, 실패한 횟수를 의미한다.)</p>
+
+<p>우리는 이 posterior distribution이 0에서 1 사이의 support space를 가지며, p와 관련된 항이 Beta(n+a-1, m+b-1)의 p.d.f.에서 p의 항과 동일함을 알 수 있다. 이에, Beta 분포의 Normalization 항을 이용하여</p>
+
+\[P(p|n,m,a,b) = \cfrac{\Gamma{(n + a + m + b)}}{\Gamma(n + a)\Gamma{(m + b)}}p^{n + a-1}(1-p)^{m + b-1}\]
+
+<p>를 복잡한 계산 없이 바로 구할 수 있다. 이는 conjugate distribution이 가져야하는 2번째 조건이 왜 필요한지 명확하게 보여준다.</p>
+
+<p>posterior distribution을 살펴보면, n이 커지면 prior에서 a가 커지는 것과 같은 효과를, m이 커지면 prior에서 b가 커지는 것과 같은 효과가 됨을 알 수 있다. 이를 통해, a 와 b를 ‘<em>effective number of observations</em> of $x = 1$ and $x = 0$’ 으로 해석할 수 있다.</p>
+
+<p>또한, 이렇게 구한 posterior distribution을 다시 $p$에 대한 prior distribution으로 생각하고 새로운 데이터를 반영한 posterior distribution을 구할 수 있다. 이러한 <em>sequential</em> approach는 왜 머신러닝에서 베이지안 관점이 인기가 있는지 알 수 있는 대목이다. 이는 새로운 데이터가 들어오는대로 지속적으로 모델을 업데이트해가는 online learning과 유사한 개념이기 때문이다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>이제 posterior distribution을 이용하여, 우리는 $prob(x=1</td>
+      <td>D)$를 계산할 수 있다. (여기서 D는 data, 즉 실제 관측된 값들을 의미한다.) $prob(x=1</td>
+      <td>D) = E(p</td>
+      <td>D)$ 로 구할 수 있고, posterior distribution을 이용하여,</td>
+    </tr>
+  </tbody>
+</table>
+
+\[prob(x = 1|D) = \cfrac{n+a}{n+a+m+b}\]
+
+<p>임을 알 수 있다. 여기서 베이지안 접근의 재밌는 점을 발견할 수 있는데, $n$과 $m$이 커짐에 따라 원래 MLE와 근사한 값을 가지게 된다는 것이다. 이는 베이지안과 MLE의 관계에서 일반적으로 나타나는 특성으로, 표본의 수가 커지면 커질수록, prior에 대한 정보보다 표본의 정보가 더 많이 반영되는 것으로 이해할 수 있다.</p>
+
+<p>또한, Beta 분포의 분산으로부터 표본의 수가 커질수록 posterior distribution의 분산이 줄어듦을 발견할 수 있는데, 이또한 베이지안 접근에서 일반적으로 나타나는 현상이다. 즉, 표본의 수가 커질 수록 모수에 대한 확신이 커지는 것으로 이해할 수 있다. 수식을 이용해서도, 평균적으로 posterior variance가 prior variance보다 작음을 증명할 수 있다.</p>
+
+<h2 id="22-multinomial-variables">2.2 Multinomial Variables</h2>
+
+<p>Bernoulli 분포 그리고 Binomial 분포는 결과가 0 혹은 1인 경우를 위한 분포이다. 하지만, 실제 케이스에서는 Binary 뿐만 아니라 Multiclass를 가지는 변수가 훨씬 많이 존재한다. 예를 들어 쇼핑을 할 때, 물건 2개 사이에서만 고민하지 않고 여러개의 물건 사이에서 무엇을 살지 고민하는 경우가 더 많다. 그렇다면 자연스럽게 Binomial 분포의 범위를 더욱 확대해야할 필요성이 느껴진다. 그 결과가 바로 Multinomial Distribution이다.</p>
+
+<p>전체 시행이 $N$번 있었다고 가정하고, 각 시행당 $K$개의 범주 중 하나에 속하게 된다고 하자. 결과적으로 $i$번째 범주에 속한 횟수를 $n_{i}$ 라고 할 때, Multinomial 분포의 p.d.f. 는</p>
+
+\[Mult(n_1,n_2,...,n_K|\mathbf{p},N) = \begin{pmatrix} N \\ {n_1,n_2,...,n_K} \end{pmatrix}\prod_{i=1}^{K}p_i^{n_i}\]
+
+<p>로 정의된다. 이때, $p_i$는 i번째 범주에 속하게 될 확률을 의미한다. 또한, 그 정의상 $\sum{p_i} = 1$ 그리고 $\sum{n_i} = N$이 되어야 함은 분명하다. Binomial 분포에서의 해석과 동일하게, 이는 $N$개의 object를 주어진 $n_1,n_2,…,n_K$에 맞춰서 $K$개의 범주에 넣는 경우의 수에 그 확률을 곱한 것으로 이해할 수 있다. 또한, Binomial 분포에서처럼 $p_i$의 MLE $\hat{p}_{i}$은 $\cfrac{n_i}{N}$으로 주어진다. 사실, 이 모든 결과는 오히려 Multinomial을 일반적인 케이스로, Binomial을 Multinomial에서 $K=2$인 특수한 상황으로 생각하면 쉽게 이해할 수 있다.</p>
+
+<h3 id="221-dirichlet-distribution">2.2.1 Dirichlet distribution</h3>
+
+<p>Binomial의 prior conjugate로 Beta Distribution을 설명한 것 처럼, Binomial의 일반화에 해당하는 Multinomial에는 Dirichlet Distribution이 prior conjugate로 역할을 한다. 이에, Dirichlet 분포를 Beta 분포의 일반화에 해당하는 것으로 생각할 수 있는데, 이들의 관계를 총 정리하면 다음과 같다.</p>
+
+<p><img src="/assets/img/KakaoTalk_Photo_2021-09-11-20-49-11.jpeg" alt="" title="2.1, 2.2에서 소개한 분포간의 관계" /></p>
+
+<p>Beta 분포의 일반화라는 데에서 생각할 수 있듯, Dirichlet 분포의 p.d.f. 는</p>
+
+\[Dir(\mathbf{p}|\boldsymbol{\alpha}) = \cfrac{\Gamma(\alpha_0)}{\Gamma(\alpha_1)\cdots\Gamma(\alpha_K)}\prod_{i=1}^{K}p_{i}^{\alpha_i-1}\]
+
+<p>로 주어진다. ($\alpha_0 = \sum{\alpha_i}$ 를 의미한다.) $p_i$들이 모두 0과 1사이의 범위에 속해야하고, 합이 1로 나와야 한다는 것은 당연한 결과이다. 해당 prior를 이용하여, Binomial 때와 동일한 과정을 거치면,</p>
+
+\[\begin {aligned} P(\mathbf{p}|D,\boldsymbol{\alpha}) &amp;= Dir(\mathbf{p}|\boldsymbol{\alpha} + \mathbf{n}) \\\\ &amp;= \cfrac{\Gamma(\alpha_0 + N)}{\Gamma(\alpha_1 + n_1)\cdots\Gamma(\alpha_K+n_K)}\prod_{i=1}^{K}p_{i}^{\alpha_i + n_i-1} \end {aligned}\]
+
+<p>로 주어짐을 알 수 있다. 이때, Binomial에서 했던 모든 설명들 또한 적용됨은 당연하다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#prml" class="page__taxonomy-item p-category" rel="tag">PRML</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#prml-%EC%8A%A4%ED%84%B0%EB%94%94" class="page__taxonomy-item p-category" rel="tag">PRML 스터디</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-09-11T00:00:00+09:00">September 11, 2021</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=PRML+%EC%8A%A4%ED%84%B0%EB%94%94+Chap.2+%281%29%20http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-2-1%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-2-1%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-2-1%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+            
+      </div>
+    </div>
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 cwyoon96. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

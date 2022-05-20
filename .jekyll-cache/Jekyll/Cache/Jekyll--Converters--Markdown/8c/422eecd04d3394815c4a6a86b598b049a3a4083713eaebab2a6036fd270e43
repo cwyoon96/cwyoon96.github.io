@@ -1,0 +1,151 @@
+I"�(<h3 id="645-gaussian-processes-for-classification">6.4.5 Gaussian processes for classification</h3>
+
+<p>이번 절에서는 Gaussian process를 이용하여 classification 문제를 푸는 방법을 소개한다. 기본적으로 Gaussian process는 real axis 전체에서 prediction을 하기 때문에 sigmoid function $\sigma(x)$을 이용해 probability를 predict 할 수 있도록 해야한다. Function $a(\mathbf{x})$에 대한 Gaussian process를 구했다고 가정하면, target variable $t$의 분포는 Bernoulli distribution</p>
+
+\[p(t|a) = \sigma(a)^{t}(1 - \sigma(a))^{1-t}\]
+
+<p>로 나타날 것이다.</p>
+
+<p>먼저 $\mathbf{a}_{N+1}$에 대한 Gaussian process prior는</p>
+
+\[p(\mathbf{a}_{N+1}) = \mathcal{N}(\mathbf{a}_{N+1}|\mathbf{0},\mathbf{C}_{N+1})\]
+
+<p>로 정의된다. 하지만 regression case와는 다르게 covariance matrix에 noise가 추가되지는 않는다 (모든 label이 correct하다고 가정). 하지만, covariance matrix가 positive definite임을 확실시하기 위해 noise와 유사한 term $\nu$를 추가해</p>
+
+\[C(\mathbf{x}_n,\mathbf{x}_m) = k(\mathbf{x}_n,\mathbf{x}_m) + \nu \delta_{nm}\]
+
+<p>으로 covariance matrix $\mathbf{C}_{N+1}$을 정의한다.</p>
+
+<p>이제, predictive distribution은</p>
+
+\[p(t_{N+1} = 1|\mathbf{t}_N) = \int p(t_{N+1} = 1|a_{N+1})p(a_{N+1}|\mathbf{t}_{N})da_{N+1}\]
+
+<p>where</p>
+
+\[p(t_{N+1} = 1|a_{N+1}) = \sigma(a_{N+1})\]
+
+<p>으로 주어진다. 하지만 이 적분은 intractable 하기 때문에 posterior distribution 
+$p(a_{N+1}|\mathbf{t}_N)$
+에 대한 Gaussian approximation을 진행해야 한다. 이를 위해 <em>variational inference</em>, <em>expectation propagation</em> 등을 사용할 수도 있지만, 여기서는 Laplace approximation을 통한 방법을 알아보자.</p>
+
+<h3 id="646-laplace-approximation">6.4.6 Laplace approximation</h3>
+
+<p>Bayes’ theorem을 통해 $a_{N+1}$에 대한 posterior distribution은</p>
+
+\[\begin{aligned}
+p(a_{N+1}|\mathbf{t}_N) &amp;= \int p(a_{N+1},\mathbf{a}_N | \mathbf{t}_N)d\mathbf{a}_{N} \\ &amp;= \cfrac{1}{p(\mathbf{t}_N)} \int p(a_{N+1},\mathbf{a}_N)p(\mathbf{t}_N | a_{N+1},\mathbf{a}_N)d\mathbf{a}_{N} \\ &amp;= \cfrac{1}{p(\mathbf{t}_N)} \int p(a_{N+1}| \mathbf{a}_N)p(\mathbf{a}_N)p(\mathbf{t}_N | \mathbf{a}_N)d\mathbf{a}_N \\ &amp; = \int p(a_{N+1}| \mathbf{a}_N)p(\mathbf{a}_N|\mathbf{t}_N)d\mathbf{a}_N \ \ \ - (*)
+\end{aligned}\]
+
+<p>로 정리된다. 2번째에서 3번째 줄으로 넘어갈 때는</p>
+
+\[p(\mathbf{t}_N|a_{N+1},\mathbf{a}_N) = p(\mathbf{t}_N|\mathbf{a}_N)\]
+
+<p>임을 사용했다. 또한, regression case에서 정리한 결과를 이용해 conditional distribution 
+$p(a_{N+1}|\mathbf{a}_N)$
+은</p>
+
+\[p(a_{N+1}|\mathbf{a}_N) = \mathcal{N}(a_{N+1}|\mathbf{k}^{T}\mathbf{C}_{N}^{-1}\mathbf{a}_N, c - \mathbf{k}^{T}\mathbf{C}_{N}^{-1}\mathbf{k})\]
+
+<p>로 주어진다. 따라서 posterior distribution 
+<span>$p(\mathbf{a}_N|\mathbf{t}_N)$</span>
+에 대한 Laplace approximation을 구하면 (*)식에 따라 적분을 하여 
+<span>$a_{N+1}$</span>
+에 대한 posterior distribution을 구할 수 있음을 알 수 있다.</p>
+
+<p>Prior $p(\mathbf{a}_N)$는 zero mean에 covariance matrix $\mathbf{C}_N$으로 주어지며, data term은</p>
+
+\[p(\mathbf{t}_N | \mathbf{a}_N) = \prod_{n = 1}^{N}\sigma(a_n)^{t_n}(1-\sigma(a_n))^{1-t_n} = \prod_{n=1}^{N}e^{a_n t_n}\sigma(-a_n)\]
+
+<p>으로 주어진다. 이제, additive normalization constant 
+$p(\mathbf{t}_N)$
+를 제외한 
+$p(\mathbf{a}_N|\mathbf{t}_N)$
+의 logarithm에 대한 Taylor exansion을 하면</p>
+
+\[\begin{aligned}
+\Psi(\mathbf{a}_N) &amp;= ln \ p(\mathbf{a}_N) + ln \ p(\mathbf{t}_N|\mathbf{a}_N) \\ &amp;= -\cfrac{1}{2}\mathbf{a}_{N}^{T}\mathbf{C}_{N}^{-1}\mathbf{a}_N - \cfrac{N}{2}ln(2\pi) - \cfrac{1}{2}ln |\mathbf{C}_N| + \mathbf{t}_{N}^{T}\mathbf{a}_N \\ &amp;-\sum_{n=1}^{N}ln(1 + e^{a_n}) + const 
+\end{aligned}\]
+
+<p>로 주어짐을 알 수 있다.</p>
+
+<p>먼저, posterior distribution의 mode 값을 구하기 위해 graident를 계산하면</p>
+
+\[\bigtriangledown \Psi(\mathbf{a}_N) = \mathbf{t}_N - \boldsymbol{\sigma}_N - \mathbf{C}_{N}^{-1}\mathbf{a}_N\]
+
+<p>으로 주어지는데, $\sigma(a_n)$의 벡터 형태인 $\boldsymbol{\sigma}_N$가 $\mathbf{a}_N$에 nonlinear하게 depend하기 때문에 단순히 gradient를 0으로 두는 것 만으로는 mode를 구할 수 없다. 따라서 Newton-Raphson 방법과 같은 알고리즘을 써야하는데 이를 위해 second derivative</p>
+
+\[\bigtriangledown \bigtriangledown \Psi(\mathbf{a}_N) = -\mathbf{W}_N - \mathbf{C}_{N}^{-1}\]
+
+<p>where $\mathbf{W}_N$ is a diagonal matrix with elements $\sigma(a_n)(1-\sigma(a_n))$</p>
+
+<p>를 사용해야 한다. 이때, diagonal element가 (0,1/4) 범위 내에서만 존재하기 때문에 $\mathbf{W}_N$은 poistive definite 임을 알 수 있다. 또한 $\mathbf{C}_N$도 p.d. 이기 때문에 (역행렬도 p.d.), 그 합 또한 p.d. 임을 알 수 있다. 따라서 Hessian matrix $A = - \bigtriangledown \bigtriangledown \Psi(\mathbf{a}_N)$가 p.d.임을 알 수 있고 posterior distribution이 log convex하여 유일한 global maxima를 가짐을 알 수 있다. 하지만, Hessian이 $\mathbf{a}_N$에 대한 function으로 주어지기에 posterior는 여전히 Gaussian은 아니다.</p>
+
+<p>이제, 4장에서 다뤘던 Newton-Raphsonn formula를 이용한 $\mathbf{a}_N$에 대한 iterative update 식은</p>
+
+\[\mathbf{a}_{N}^{new} = \mathbf{C}_N(\mathbf{I} + \mathbf{W}_N \mathbf{C}_N)^{-1}\{\mathbf{t}_N - \boldsymbol{\sigma}_N + \mathbf{W}_N \mathbf{a}_N \}\]
+
+<p>으로 주어진다. Mode 값 $\mathbf{a}_N^{*}$에서는 gradient 값은 0이 될 것이기 때문에</p>
+
+\[\mathbf{a}_N^{*} = \mathbf{C}_N (\mathbf{t}_N - \boldsymbol{\sigma}_N)\]
+
+<p>식이 성립할 것이다. 이제 $\mathbf{a}_N^{*}$에서의 Hessian matrix $H$를 계산하면 posterior distribution에 대한 Gaussian approximation은</p>
+
+\[q(\mathbf{a}_N) = \mathcal{N}(\mathbf{a}_N | \mathbf{a}_N^{*},H^{-1})\]
+
+<p>으로 구할 수 있다.</p>
+
+<p>이제, 원래 구하고자 하였던 
+$p(a_{N+1}|\mathbf{t}_N)$
+은 linear-Gaussian model에 따라</p>
+
+\[\begin{aligned}
+\mathbb{E}[a_{N+1}|\mathbf{t}_N] &amp;= \mathbf{k}^{T}(\mathbf{t}_N - \boldsymbol{\sigma}_N) \\ \text{var}[a_{N+1}|\mathbf{t}_N] &amp;= c - \mathbf{k}^{T}(\mathbf{W}_N^{-1} + \mathbf{C}_N)^{-1}\mathbf{k}
+\end{aligned}\]
+
+<p>의 값을 가지는 Gaussian distribution으로 approximate 할 수 있다. 최종적으로 predictive distribution은 6.4.5절에서 주어진 적분식을 통해 구할 수 있다.</p>
+
+<p>Regression case에서와 마찬가지로 classification case에서도 covariance function에 들어간 parameter $\boldsymbol{\theta}$를 최적화하는 작업을 해야한다. Likelihood function은</p>
+
+\[p(\mathbf{t}_N|\boldsymbol{\theta}) = \int p(\mathbf{t}_N|\mathbf{a}_N)p(\mathbf{a}_N|\boldsymbol{\theta})d\mathbf{a}_N\]
+
+<p>으로 주어지는데, 역시 적분이 intractable하기 때문에 다시 Laplace approximation을 사용한다. 4.4절에서 정리한 결과를 다시 이용하여</p>
+
+\[ln \ p(\mathbf{t}_N|\boldsymbol{\theta}) = \Psi(\mathbf{a}_N^{*}) - \cfrac{1}{2}ln|\mathbf{W}_N + \mathbf{C}_{N}^{-1}| + \cfrac{N}{2}ln(2\pi)\]
+
+<p>where</p>
+
+\[\Psi(\mathbf{a}_N^{*}) = ln \ p(\mathbf{a}_N^{*}|\boldsymbol{\theta}) + ln \ p(\mathbf{t}_N|\mathbf{a}_N^{*})\]
+
+<p>으로 주어진다. 이제 gradient를 구하면 되는데, covariance matrix $\mathbf{C}_N$의 $\boldsymbol{\theta}$에 대한 explicit한 dependence로 인한 term과 $\mathbf{a}_N^{*}$의 $\boldsymbol{\theta}$에 대한 dependence로 인한 term 2가지를 생각할 수 있다.</p>
+
+<p>먼저, explicit dependence term은</p>
+
+\[\begin{aligned}
+\cfrac{\partial ln \ p(\mathbf{t}_N|\boldsymbol{\theta})}{\partial \theta_j} \ = \ &amp;\cfrac{1}{2}\mathbf{a}_{N}^{*T}\mathbf{C}_{N}^{-1}\cfrac{\partial \mathbf{C}_N}{\partial \theta_j}\mathbf{C}_{N}^{-1}\mathbf{a}_{N}^{*} \\ &amp;- \cfrac{1}{2}Tr\bigg[ (\mathbf{I} + \mathbf{C}_N\mathbf{W}_N)^{-1}\mathbf{W}_N\cfrac{\partial \mathbf{C}_N}{\partial \theta_j} \bigg]
+\end{aligned}\]
+
+<p>으로 주어진다.</p>
+
+<p><span>$\mathbf{a}_N^{*}$</span>
+의 parameter에 대한 dependence로 인한 term에서 
+<span>$\Psi(\mathbf{a}_N)$</span>
+는 
+<span>$\mathbf{a}_N^{*}$</span>
+에서 gradient가 0이 되도록 Laplace approximation을 사용했기 때문에, 2번째 term에 대해서만 계산하면 된다는 것을 알 수 있다. 2번째 term에 대한 gradient는</p>
+
+\[\begin{aligned}
+-\cfrac{1}{2}&amp;\sum_{n = 1}^{N} \cfrac{\partial ln|\mathbf{W}_N + \mathbf{C}_N^{-1}|}{\partial a_{n}^{*}}\cfrac{\partial a_n^*}{\partial \theta_j} \\ &amp;= -\cfrac{1}{2}\sum_{n=1}^{N}\big[ (\mathbf{I}+ \mathbf{C}_N\mathbf{W}_N)^{-1}\mathbf{C}_N \big]_{nn}\sigma_{n}^{*}(1 - \sigma_{n}^{*})(1-2\sigma_{n}^{*})\cfrac{\partial a_{n}^{*}}{\partial \theta_j}
+\end{aligned}\]
+
+<p>으로 구할 수 있다. 또한, 위에 주어진 $\mathbf{a}_N^{*}$에 대한 식을 이용하여</p>
+
+\[\cfrac{\partial a_{n}^{*}}{\partial \theta_j} = (\mathbf{I} + \mathbf{W}_N \mathbf{C}_N)^{-1}\cfrac{\partial \mathbf{C}_N}{\partial \theta_j}(\mathbf{t}_N - \boldsymbol{\sigma}_N)\]
+
+<p>임을 알 수 있다. 이제 필요한 모든 term들을 구했으므로 graident를 계산할 수 있고, nonlinear optimization algorithm을 이용해 최적의 $\boldsymbol{\theta}$를 구해주면 된다.</p>
+
+<h3 id="647-connection-to-neural-networks">6.4.7 Connection to neural networks</h3>
+
+<p>Neural network 파트에서 hidden unit의 개수 M을 충분히 늘리면 two-layer network가 어떤 function이든 approximate할 수 있다는 것을 배웠었다. Neal (1996)은 Bayesian neural network에서 $\mathbf{w}$에 대한 특정 prior distribution들을 가정하였을 때, neural network에서 생성된 함수의 분포가 M이 무한대에 가까워짐에 따라 Gaussian process를 따르게 된다는 것을 밝혀냈다. 하지만, M이 무한대로 가면 output은 서로 indenpendent 하게 될 것이고 이렇게 되면 같은 hidden unit을 공유한다는 neural network의 장점을 살리지 못한다는 장점이 있다.</p>
+
+<p>또한, Gaussian process는 covariance function (kernel function)을 어떻게 정의하냐에 따라 결과가 달라지는 것을 확인했는데, Willianms (1998)는 hidden unit activation function을 probit 혹은 Gaussian으로 설정하는 지에 따른 covariance function의 explicit form을 제시하였다.</p>
+:ET

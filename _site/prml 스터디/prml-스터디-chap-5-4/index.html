@@ -1,0 +1,841 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>PRML 스터디 Chap.5.4 | Statistics and Machine Learning Lab by cwyoon96</title>
+<meta name="description" content="5.4 The Hessian Matrix">
+
+
+  <meta name="author" content="cwyoon96">
+  
+  <meta property="article:author" content="cwyoon96">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Statistics and Machine Learning Lab by cwyoon96">
+<meta property="og:title" content="PRML 스터디 Chap.5.4">
+<meta property="og:url" content="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-4/">
+
+
+  <meta property="og:description" content="5.4 The Hessian Matrix">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-02-17T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-4/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "cwyoon96",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Statistics and Machine Learning Lab by cwyoon96 Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Statistics and Machine Learning Lab by cwyoon96
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">cwyoon96</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>통계학 그리고 머신러닝을 공부하는 사람입니다.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Daejeon, South Korea</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/cwyoon96" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="PRML 스터디 Chap.5.4">
+    <meta itemprop="description" content="5.4 The Hessian Matrix">
+    <meta itemprop="datePublished" content="2022-02-17T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-4/" class="u-url" itemprop="url">PRML 스터디 Chap.5.4
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#54-the-hessian-matrix">5.4 The Hessian Matrix</a><ul><li><a href="#541-diagonal-approximation">5.4.1 Diagonal approximation</a></li><li><a href="#542-outer-product-approximation">5.4.2 Outer product approximation</a></li><li><a href="#543-inverse-hessian">5.4.3 Inverse Hessian</a></li><li><a href="#544-finite-differences">5.4.4 Finite differences</a></li><li><a href="#545-exact-evaluation-of-the-hessian">5.4.5 Exact evaluation of the Hessian</a></li><li><a href="#546-fast-multiplication-by-the-hessian">5.4.6 Fast multiplication by the Hessian</a></li></ul></li></ul>
+
+            </nav>
+          </aside>
+        
+        <h2 id="54-the-hessian-matrix">5.4 The Hessian Matrix</h2>
+
+<p>지금까지는 1차 미분값 (gradient)를 구하기 위해 backpropagation을 쓰는 방법을 공부했지만, backpropagation을 이용하여 2차 미분값</p>
+
+\[\cfrac{\partial^2 E}{\partial w_{ji}\partial w_{lk}}\]
+
+<p>을 구할 수 도 있다. 이 때, 2차 미분 값을 모아둔 matrix를 Hessian Matrix라고 부르는데, Hessian은 다음과 같은 역할로 사용된다.</p>
+
+<ol>
+  <li>다양한 비선형 최적화 알고리즘은 2차 미분값의 특성에 기반을 두고 있다.</li>
+  <li>Train data에 변화가 생겼을 때 빠르게 re-train 하는데 2차 미분값이 사용된다.</li>
+  <li>Hessian의 inverse를 통해 weight의 중요도를 판단할 수 있다.</li>
+  <li>Bayesian nueral network에서 Laplace approximation을 하는데 사용된다.</li>
+</ol>
+
+<p>Hessian은 approximation을 통해서 구하기도 하고, backpropagation을 통해 exact value를 구할 수도 있다. 다만, 전체 $W$개의 parameter가 존재한다고 할 때, Hessian의 차원은 $W \times W$ 이기 때문에 efficient evaluation scale은 $O(W^2)$이다.</p>
+
+<h3 id="541-diagonal-approximation">5.4.1 Diagonal approximation</h3>
+
+<p>많은 경우 Hessian 그 자체보다 Hessian의 inverse가 필요하다. 따라서 Hessian의 diagonal을 approximate해서 off-diagonal을 0으로 두고 inverse를 쉽게 구하는 경우가 있다. 당연히 대부분의 Hessian은 diagonal matrix가 아니기 때문에 사용시 주의를 기울여야 한다. Hessian의 diagonal element는</p>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{ji}^2} = \cfrac{\partial E_n}{\partial a_j^2}z_i^2\]
+
+<p>로 주어지는데, 앞서 봤던 chain rule을 이용하면</p>
+
+\[\cfrac{\partial E_n}{\partial a_j^2} = h'(a_j)^2 \sum_{k} \sum_{k'}w_{kj}w_{k'j}\cfrac{\partial^2 E_n}{\partial a_k \partial a_{k'}} + h''(a_j) \sum_{k} w_{kj} \cfrac{\partial E_n}{\partial a_k}\]
+
+<p>임을 알 수 있다. 이제 2차 미분 term에서 off-diagonal term을 지우면</p>
+
+\[\cfrac{\partial E_n}{\partial a_j^2} = h'(a_j)^2 \sum_{k}w_{kj}^2\cfrac{\partial^2 E_n}{\partial a_k^2} + h''(a_j) \sum_{k} w_{kj} \cfrac{\partial E_n}{\partial a_k}\]
+
+<p>을 구할 수 있다. 이러한 diagonal approximation의 cost는 $O(W)$로, full Hessian의 $O(W^2)$ 보다 훨씬 적은 cost가 든다. 물론, odff-diagonal term을 지우지 않고 approximate할 수 있지만 그러면 $O(W)$ scale이 아니게 된다.</p>
+
+<h3 id="542-outer-product-approximation">5.4.2 Outer product approximation</h3>
+
+<p>Single output regression 문제를 생각하면 Hessian  $\mathbf{H}$는</p>
+
+\[\mathbf{H} = \bigtriangledown \bigtriangledown E = \sum_{n=1}^{N} \bigtriangledown y_n \bigtriangledown y_n + \sum_{n=1}^{N} (y_n - t_n) \bigtriangledown \bigtriangledown y_n\]
+
+<p>으로 주어진다. 이때, optimal function은  target data의 conditional average를 output으로 주기 때문에 뒤에 
+<span>$y_n - t_n$</span>
+은 zero mean을 가지는 random variable이 된다. 2차 미분값과 uncorrelated 되었다고 가정하면 second term 전체는 sum을 거치면서 0으로 approximate 될 것이다.</p>
+
+<p>이렇게</p>
+
+\[\mathbf{H} \backsimeq \sum_{n=1}^N \mathbf{b}_n\mathbf{b}_n^T\]
+
+<p>where <span>$\mathbf{b}_n = \bigtriangledown y_n = \bigtriangledown a_n$</span></p>
+
+<p>형태의 approximation을 outer product approximation이라 부른다. 1차 미분값 만을 이용하여 approximation을 하기 때문에 전체 $O(W^2)$의 cost가 든다. 물론, 실제로는 second term을 무시하기 힘들기 때문에 가정처럼 잘 train 된 network에 대해서만 유의미한 approximation이다.</p>
+
+<p>Cross-entropy error function에 logistic sigmoid output-uinit activation function을 사용하는 경우</p>
+
+\[\mathbf{H} \backsimeq \sum_{n=1}^N y_n(1-y_n) \mathbf{b}_n\mathbf{b}_n^T\]
+
+<p>으로 approximate 할 수 있으며 softmax의 경우에도 형태에 맞춰 approximate 할 수 있다.</p>
+
+<h3 id="543-inverse-hessian">5.4.3 Inverse Hessian</h3>
+
+<p>Outer approximation을 통해 Hessian의 inverse를 쉽게 approximate할 수 있다. Outer approximation을</p>
+
+\[\mathbf{H}_N = \sum_{n=1}^{N} \mathbf{b}_n\mathbf{b}_n^T\]
+
+<p>로 notate하자. 현재까지 $L$ data points를 통해 Hessian matrix를 approximate 하고 그 inverse를 구했다고 하자. 이때 $L+1$th data point를 추가하면</p>
+
+\[\mathbf{H}_{L+1} = \mathbf{H}_{L} + \mathbf{b}_{L+1}\mathbf{b}_{L+1}^T\]
+
+<p>로 쓸 수 있다. 이때, Woodbury identity를 이용하면</p>
+
+\[\mathbf{H}_{L+1}^{-1} = \mathbf{H}_{L}^{-1} - \cfrac{\mathbf{H}_{L}^{-1}\mathbf{b}_{L+1} \mathbf{b}_{L+1}^T \mathbf{H}_{L}^{-1}}{1+ \mathbf{b}_{L+1}^T \mathbf{H}_{L}^{-1} \mathbf{b}_{L+1}}\]
+
+<p>를 구할 수 있다. 이러한 방법을 통해 $L+1$이 N이 될 때까지 sequential하게 구하면 Hessian matrix의 inverse를 쉽게 approximate할 수 있다. 가장 첫 $\mathbf{H}_0$은 보통 $\alpha \mathbf{I}$로 두기 때문에 실질적으로는 
+$\mathbf{H} + \alpha \mathbf{I}$의 inverse를 구하는 형태가 된다.</p>
+
+<h3 id="544-finite-differences">5.4.4 Finite differences</h3>
+
+<p>Hessian 역시 finite differences를 통해 구할 수 있는데,</p>
+
+\[\cfrac{\partial^2 E}{\partial w_{ji} \partial w_{lk}} = \cfrac{1}{4 \epsilon^2}\{E(w_{ji} + \epsilon, \ w_{lk} + \epsilon ) - E(w_{ji} + \epsilon, \ w_{lk} - \epsilon ) \\ - E(w_{ji} - \epsilon, \ w_{lk} + \epsilon) + E(w_{ji} - \epsilon, \ w_{lk} - \epsilon ) \} + O(\epsilon^2)\]
+
+<p>의 형태가 된다. Hessian에는 $W^2$의 element가 있고, 하나의 evaluation은 $W$ 만큼의 cost가 들기 때문에 총 $O(W^3)$의 ocst가 들지만 여전히 backpropagation implementation의 check를 위해 사용된다.</p>
+
+<p>1차 미분값에 central difference를 이용해 numerical differentiation을 더 효울적으로 할 수 있는데,</p>
+
+\[\cfrac{\partial^2 E}{\partial w_{ji} \partial w_{lk}} = \cfrac{1}{2\epsilon} \bigg\{ \cfrac{\partial E}{\partial w_{ji}}(w_{lk} + \epsilon) - \cfrac{\partial E}{\partial w_{ji}}(w_{lk} - \epsilon)  \bigg\} + O(\epsilon^2)\]
+
+<p>의 형태가 되며 이때는 $O(W^2)$ 만큼의 cost가 드는 것을 확인할 수 있다.</p>
+
+<h3 id="545-exact-evaluation-of-the-hessian">5.4.5 Exact evaluation of the Hessian</h3>
+
+<p>현재까지는 Hessian 혹은 그 inverse를 approximate하는 방법을 살펴보았지만, 실제로 Hessian은 backpropagation을 통해 excat evaluation이 가능하며 그 cost는 $O(W^2)$ scale이다.</p>
+
+<p>여기서는 예시로 input ($i,i’$ index), 하나의 hidden layer ($j, j’$ index), 그리고 output ($k,k’$ index)로 이루어진 network를 생각하겠다. 먼저</p>
+
+\[\delta_k = \cfrac{\partial E_n}{\partial a_k}, \; M_{kk'} \equiv \cfrac{\partial^2 E_n}{\partial a_k \partial a_{k'}}\]
+
+<p>를 정의하자.  이때 Hessian matrix는 3개의 block으로 구성되는 것으로 생각할 수 있는데,</p>
+
+<ol>
+  <li>Second layer에서의 weights에 대한 2차 미분</li>
+</ol>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{kj}^{(2)} \partial w_{k'j'}^{(2)}} = z_j z_{j'}M_{kk'}\]
+
+<ol>
+  <li>First layer에서의 weights에 대한 2차 미분</li>
+</ol>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{ji}^{(1)} \partial w_{j'i'}^{(1)}} = x_i x_{i'} h''(a_{j'})I_{jj'}\sum_{k} w_{kj'}^{(2)}\delta_{k} \\ + x_i x_{i'}h'(a_{j'})h'(a_j)\sum_{k} \sum_{k'} w_{k'j'}^{(2)} w_{kj}^{(2)}M_{kk'}\]
+
+<ol>
+  <li>각 layer에서 weight 한번씩</li>
+</ol>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{ki}^{(2)}\partial w_{kj'}^{(2)}} = x_i h'(a_{j'}) \bigg\{ \delta_k I_{jj'} + z_j \sum_{k'} w_{k'j'}^{(2)} H_{kk'} \bigg\}\]
+
+<p>로 각각 구해진다.</p>
+
+<h3 id="546-fast-multiplication-by-the-hessian">5.4.6 Fast multiplication by the Hessian</h3>
+
+<p>Hessian을 사용하는 대부분의 case는 $\mathbf{v}^T\mathbf{H}$ 형태의 vector를 product한 경우이다. 이때 $\mathbf{v}^T\mathbf{H}$는 $O(W)$ scale이기 때문에 이를 바로 계산하는 것이 더 효율적일 것이다. 이를 위해</p>
+
+\[\mathbf{v}^T\mathbf{H} = \mathbf{v}^T \bigtriangledown (\bigtriangledown E)\]
+
+<p>에서</p>
+
+\[\mathcal{R}\{\cdot \} \equiv \mathbf{v}^T \bigtriangledown (\cdot)\]
+
+<p>notation을 정의하자. 예를 들어</p>
+
+\[\mathcal{R}\{\ \mathbf{w} \} = \mathbf{v}\]
+
+<p>가 될 것이다.</p>
+
+<p>다시 two-layer network에 linear output units, sum-of-square error function을 사용하는 경우를 예로 들어보자. Forward propagation의 경우</p>
+
+\[\begin{aligned}
+a_j &amp;= \sum_i w_{ji}x_i \\
+z_j &amp;= h(a_j) \\
+y_k &amp;= \sum_j w_{kj} z_j
+\end{aligned}\]
+
+<p>으로 정의했었는데, 이제 $\mathcal{R}{\cdot}$ operator를 사용하여</p>
+
+\[\begin{aligned}
+\mathcal{R}\{a_j\} &amp;= \sum_i v_{ji}x_i \\
+\mathcal{R}\{z_j\} &amp;= h'(a_j)\mathcal{R}\{a_j\} \\
+\mathcal{R}\{y_k\} &amp;= \sum_j w_{kj} \mathcal{R}\{z_j\} + \sum_j v_{kj}z_j
+\end{aligned}\]
+
+<p>를 구할 수 있다. (여기서 $v_{ji}$는 weight $w_{ji}$에 대응하는 element)</p>
+
+<p>이제 bacpropagation으로 돌아가면</p>
+
+\[\begin{aligned}
+\delta_k &amp;= y_k - t_k \\
+\delta_j &amp;= h'(a_j) \sum_k w_{kj}\delta_k
+\end{aligned}\]
+
+<p>임을 알고 있었다. 여기서도 $\mathcal{R}{\cdot}$ operator를 사용하여</p>
+
+\[\begin{aligned}
+\mathcal{R}\{\delta_k\} &amp;= \mathcal{R}\{y_k\} \\
+\mathcal{R}\{\delta_j\} &amp;= h''(a_j)\mathcal{R}\{a_j\}\sum_{k} w_{kj}\delta_k \\
+&amp;+ h'(a_j)\sum_{k} v_{kj}\delta_k + h'(a_j)\sum_{k} w_{kj}\mathcal{R}\{\delta_k\}
+\end{aligned}\]
+
+<p>를 구할 수 있다.</p>
+
+<p>마지막으로, 1차 미분값</p>
+
+\[\begin{aligned}
+
+\cfrac{\partial E}{\partial w_{kj}} &amp;= \delta_k z_j \\
+
+\cfrac{\partial E}{\partial w_{ji}} &amp;= \delta_j x_i
+
+\end{aligned}\]
+
+<p>에  $\mathcal{R}{\cdot}$ operator를 사용하여 vector $\mathbf{v}^T\mathbf{H}$의 원소에 대한 expression을 구할 수 있다.</p>
+
+\[\begin{aligned}
+
+\mathcal{R}\bigg\{ \cfrac{\partial E}{\partial w_{kj}} \bigg\} &amp;=  \mathcal{R}\{\delta_k\} z_j + \delta_k \mathcal{R}\{z_j\} \\
+
+
+\mathcal{R}\bigg\{ \cfrac{\partial E}{\partial w_{ji}}\bigg\} &amp;= x_{i}\mathcal{R}\{\delta_j\}
+
+\end{aligned}\]
+
+<p>이때 $\mathbf{v}$에 unit vector를 넣어 Hessian의 element도 구할 수 있다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#prml" class="page__taxonomy-item p-category" rel="tag">PRML</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#prml-%EC%8A%A4%ED%84%B0%EB%94%94" class="page__taxonomy-item p-category" rel="tag">PRML 스터디</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-02-17T00:00:00+09:00">February 17, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=PRML+%EC%8A%A4%ED%84%B0%EB%94%94+Chap.5.4%20http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-5-4%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-5-4%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-5-4%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-2-3/" class="pagination--pager" title="PRML 스터디 Chap.5.2-3
+">이전</a>
+    
+    
+      <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-7/" class="pagination--pager" title="PRML 스터디 Chap.5.7
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-4/" rel="permalink">PRML 스터디 Chap.6.4
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">6.4.5 Gaussian processes for classification
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-1-2/" rel="permalink">PRML 스터디 Chap.6.1-2
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">6. Kernel Methods
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-7/" rel="permalink">PRML 스터디 Chap.5.7
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">5.5.5 Training with transformed data
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-2-3/" rel="permalink">PRML 스터디 Chap.5.2-3
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">5.2.2 Local quadratic approximation
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 cwyoon96. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+	extensions: ["tex2jax.js"],
+	jax: ["input/TeX", "output/HTML-CSS"],
+	tex2jax: {
+		inlineMath: [ ['$','$'] ],
+		processEscapes: true
+	},
+	"HTML-CSS": { availableFonts: ["TeX"] }
+});
+</script>
+
+
+  </body>
+</html>

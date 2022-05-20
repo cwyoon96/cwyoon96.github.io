@@ -1,0 +1,192 @@
+I"�'<h2 id="54-the-hessian-matrix">5.4 The Hessian Matrix</h2>
+
+<p>지금까지는 1차 미분값 (gradient)를 구하기 위해 backpropagation을 쓰는 방법을 공부했지만, backpropagation을 이용하여 2차 미분값</p>
+
+\[\cfrac{\partial^2 E}{\partial w_{ji}\partial w_{lk}}\]
+
+<p>을 구할 수 도 있다. 이 때, 2차 미분 값을 모아둔 matrix를 Hessian Matrix라고 부르는데, Hessian은 다음과 같은 역할로 사용된다.</p>
+
+<ol>
+  <li>다양한 비선형 최적화 알고리즘은 2차 미분값의 특성에 기반을 두고 있다.</li>
+  <li>Train data에 변화가 생겼을 때 빠르게 re-train 하는데 2차 미분값이 사용된다.</li>
+  <li>Hessian의 inverse를 통해 weight의 중요도를 판단할 수 있다.</li>
+  <li>Bayesian nueral network에서 Laplace approximation을 하는데 사용된다.</li>
+</ol>
+
+<p>Hessian은 approximation을 통해서 구하기도 하고, backpropagation을 통해 exact value를 구할 수도 있다. 다만, 전체 $W$개의 parameter가 존재한다고 할 때, Hessian의 차원은 $W \times W$ 이기 때문에 efficient evaluation scale은 $O(W^2)$이다.</p>
+
+<h3 id="541-diagonal-approximation">5.4.1 Diagonal approximation</h3>
+
+<p>많은 경우 Hessian 그 자체보다 Hessian의 inverse가 필요하다. 따라서 Hessian의 diagonal을 approximate해서 off-diagonal을 0으로 두고 inverse를 쉽게 구하는 경우가 있다. 당연히 대부분의 Hessian은 diagonal matrix가 아니기 때문에 사용시 주의를 기울여야 한다. Hessian의 diagonal element는</p>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{ji}^2} = \cfrac{\partial E_n}{\partial a_j^2}z_i^2\]
+
+<p>로 주어지는데, 앞서 봤던 chain rule을 이용하면</p>
+
+\[\cfrac{\partial E_n}{\partial a_j^2} = h'(a_j)^2 \sum_{k} \sum_{k'}w_{kj}w_{k'j}\cfrac{\partial^2 E_n}{\partial a_k \partial a_{k'}} + h''(a_j) \sum_{k} w_{kj} \cfrac{\partial E_n}{\partial a_k}\]
+
+<p>임을 알 수 있다. 이제 2차 미분 term에서 off-diagonal term을 지우면</p>
+
+\[\cfrac{\partial E_n}{\partial a_j^2} = h'(a_j)^2 \sum_{k}w_{kj}^2\cfrac{\partial^2 E_n}{\partial a_k^2} + h''(a_j) \sum_{k} w_{kj} \cfrac{\partial E_n}{\partial a_k}\]
+
+<p>을 구할 수 있다. 이러한 diagonal approximation의 cost는 $O(W)$로, full Hessian의 $O(W^2)$ 보다 훨씬 적은 cost가 든다. 물론, odff-diagonal term을 지우지 않고 approximate할 수 있지만 그러면 $O(W)$ scale이 아니게 된다.</p>
+
+<h3 id="542-outer-product-approximation">5.4.2 Outer product approximation</h3>
+
+<p>Single output regression 문제를 생각하면 Hessian  $\mathbf{H}$는</p>
+
+\[\mathbf{H} = \bigtriangledown \bigtriangledown E = \sum_{n=1}^{N} \bigtriangledown y_n \bigtriangledown y_n + \sum_{n=1}^{N} (y_n - t_n) \bigtriangledown \bigtriangledown y_n\]
+
+<p>으로 주어진다. 이때, optimal function은  target data의 conditional average를 output으로 주기 때문에 뒤에 
+<span>$y_n - t_n$</span>
+은 zero mean을 가지는 random variable이 된다. 2차 미분값과 uncorrelated 되었다고 가정하면 second term 전체는 sum을 거치면서 0으로 approximate 될 것이다.</p>
+
+<p>이렇게</p>
+
+\[\mathbf{H} \backsimeq \sum_{n=1}^N \mathbf{b}_n\mathbf{b}_n^T\]
+
+<p>where <span>$\mathbf{b}_n = \bigtriangledown y_n = \bigtriangledown a_n$</span></p>
+
+<p>형태의 approximation을 outer product approximation이라 부른다. 1차 미분값 만을 이용하여 approximation을 하기 때문에 전체 $O(W^2)$의 cost가 든다. 물론, 실제로는 second term을 무시하기 힘들기 때문에 가정처럼 잘 train 된 network에 대해서만 유의미한 approximation이다.</p>
+
+<p>Cross-entropy error function에 logistic sigmoid output-uinit activation function을 사용하는 경우</p>
+
+\[\mathbf{H} \backsimeq \sum_{n=1}^N y_n(1-y_n) \mathbf{b}_n\mathbf{b}_n^T\]
+
+<p>으로 approximate 할 수 있으며 softmax의 경우에도 형태에 맞춰 approximate 할 수 있다.</p>
+
+<h3 id="543-inverse-hessian">5.4.3 Inverse Hessian</h3>
+
+<p>Outer approximation을 통해 Hessian의 inverse를 쉽게 approximate할 수 있다. Outer approximation을</p>
+
+\[\mathbf{H}_N = \sum_{n=1}^{N} \mathbf{b}_n\mathbf{b}_n^T\]
+
+<p>로 notate하자. 현재까지 $L$ data points를 통해 Hessian matrix를 approximate 하고 그 inverse를 구했다고 하자. 이때 $L+1$th data point를 추가하면</p>
+
+\[\mathbf{H}_{L+1} = \mathbf{H}_{L} + \mathbf{b}_{L+1}\mathbf{b}_{L+1}^T\]
+
+<p>로 쓸 수 있다. 이때, Woodbury identity를 이용하면</p>
+
+\[\mathbf{H}_{L+1}^{-1} = \mathbf{H}_{L}^{-1} - \cfrac{\mathbf{H}_{L}^{-1}\mathbf{b}_{L+1} \mathbf{b}_{L+1}^T \mathbf{H}_{L}^{-1}}{1+ \mathbf{b}_{L+1}^T \mathbf{H}_{L}^{-1} \mathbf{b}_{L+1}}\]
+
+<p>를 구할 수 있다. 이러한 방법을 통해 $L+1$이 N이 될 때까지 sequential하게 구하면 Hessian matrix의 inverse를 쉽게 approximate할 수 있다. 가장 첫 $\mathbf{H}_0$은 보통 $\alpha \mathbf{I}$로 두기 때문에 실질적으로는 
+$\mathbf{H} + \alpha \mathbf{I}$의 inverse를 구하는 형태가 된다.</p>
+
+<h3 id="544-finite-differences">5.4.4 Finite differences</h3>
+
+<p>Hessian 역시 finite differences를 통해 구할 수 있는데,</p>
+
+\[\cfrac{\partial^2 E}{\partial w_{ji} \partial w_{lk}} = \cfrac{1}{4 \epsilon^2}\{E(w_{ji} + \epsilon, \ w_{lk} + \epsilon ) - E(w_{ji} + \epsilon, \ w_{lk} - \epsilon ) \\ - E(w_{ji} - \epsilon, \ w_{lk} + \epsilon) + E(w_{ji} - \epsilon, \ w_{lk} - \epsilon ) \} + O(\epsilon^2)\]
+
+<p>의 형태가 된다. Hessian에는 $W^2$의 element가 있고, 하나의 evaluation은 $W$ 만큼의 cost가 들기 때문에 총 $O(W^3)$의 ocst가 들지만 여전히 backpropagation implementation의 check를 위해 사용된다.</p>
+
+<p>1차 미분값에 central difference를 이용해 numerical differentiation을 더 효울적으로 할 수 있는데,</p>
+
+\[\cfrac{\partial^2 E}{\partial w_{ji} \partial w_{lk}} = \cfrac{1}{2\epsilon} \bigg\{ \cfrac{\partial E}{\partial w_{ji}}(w_{lk} + \epsilon) - \cfrac{\partial E}{\partial w_{ji}}(w_{lk} - \epsilon)  \bigg\} + O(\epsilon^2)\]
+
+<p>의 형태가 되며 이때는 $O(W^2)$ 만큼의 cost가 드는 것을 확인할 수 있다.</p>
+
+<h3 id="545-exact-evaluation-of-the-hessian">5.4.5 Exact evaluation of the Hessian</h3>
+
+<p>현재까지는 Hessian 혹은 그 inverse를 approximate하는 방법을 살펴보았지만, 실제로 Hessian은 backpropagation을 통해 excat evaluation이 가능하며 그 cost는 $O(W^2)$ scale이다.</p>
+
+<p>여기서는 예시로 input ($i,i’$ index), 하나의 hidden layer ($j, j’$ index), 그리고 output ($k,k’$ index)로 이루어진 network를 생각하겠다. 먼저</p>
+
+\[\delta_k = \cfrac{\partial E_n}{\partial a_k}, \; M_{kk'} \equiv \cfrac{\partial^2 E_n}{\partial a_k \partial a_{k'}}\]
+
+<p>를 정의하자.  이때 Hessian matrix는 3개의 block으로 구성되는 것으로 생각할 수 있는데,</p>
+
+<ol>
+  <li>Second layer에서의 weights에 대한 2차 미분</li>
+</ol>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{kj}^{(2)} \partial w_{k'j'}^{(2)}} = z_j z_{j'}M_{kk'}\]
+
+<ol>
+  <li>First layer에서의 weights에 대한 2차 미분</li>
+</ol>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{ji}^{(1)} \partial w_{j'i'}^{(1)}} = x_i x_{i'} h''(a_{j'})I_{jj'}\sum_{k} w_{kj'}^{(2)}\delta_{k} \\ + x_i x_{i'}h'(a_{j'})h'(a_j)\sum_{k} \sum_{k'} w_{k'j'}^{(2)} w_{kj}^{(2)}M_{kk'}\]
+
+<ol>
+  <li>각 layer에서 weight 한번씩</li>
+</ol>
+
+\[\cfrac{\partial^2 E_n}{\partial w_{ki}^{(2)}\partial w_{kj'}^{(2)}} = x_i h'(a_{j'}) \bigg\{ \delta_k I_{jj'} + z_j \sum_{k'} w_{k'j'}^{(2)} H_{kk'} \bigg\}\]
+
+<p>로 각각 구해진다.</p>
+
+<h3 id="546-fast-multiplication-by-the-hessian">5.4.6 Fast multiplication by the Hessian</h3>
+
+<p>Hessian을 사용하는 대부분의 case는 $\mathbf{v}^T\mathbf{H}$ 형태의 vector를 product한 경우이다. 이때 $\mathbf{v}^T\mathbf{H}$는 $O(W)$ scale이기 때문에 이를 바로 계산하는 것이 더 효율적일 것이다. 이를 위해</p>
+
+\[\mathbf{v}^T\mathbf{H} = \mathbf{v}^T \bigtriangledown (\bigtriangledown E)\]
+
+<p>에서</p>
+
+\[\mathcal{R}\{\cdot \} \equiv \mathbf{v}^T \bigtriangledown (\cdot)\]
+
+<p>notation을 정의하자. 예를 들어</p>
+
+\[\mathcal{R}\{\ \mathbf{w} \} = \mathbf{v}\]
+
+<p>가 될 것이다.</p>
+
+<p>다시 two-layer network에 linear output units, sum-of-square error function을 사용하는 경우를 예로 들어보자. Forward propagation의 경우</p>
+
+\[\begin{aligned}
+a_j &amp;= \sum_i w_{ji}x_i \\
+z_j &amp;= h(a_j) \\
+y_k &amp;= \sum_j w_{kj} z_j
+\end{aligned}\]
+
+<p>으로 정의했었는데, 이제 $\mathcal{R}{\cdot}$ operator를 사용하여</p>
+
+\[\begin{aligned}
+\mathcal{R}\{a_j\} &amp;= \sum_i v_{ji}x_i \\
+\mathcal{R}\{z_j\} &amp;= h'(a_j)\mathcal{R}\{a_j\} \\
+\mathcal{R}\{y_k\} &amp;= \sum_j w_{kj} \mathcal{R}\{z_j\} + \sum_j v_{kj}z_j
+\end{aligned}\]
+
+<p>를 구할 수 있다. (여기서 $v_{ji}$는 weight $w_{ji}$에 대응하는 element)</p>
+
+<p>이제 bacpropagation으로 돌아가면</p>
+
+\[\begin{aligned}
+\delta_k &amp;= y_k - t_k \\
+\delta_j &amp;= h'(a_j) \sum_k w_{kj}\delta_k
+\end{aligned}\]
+
+<p>임을 알고 있었다. 여기서도 $\mathcal{R}{\cdot}$ operator를 사용하여</p>
+
+\[\begin{aligned}
+\mathcal{R}\{\delta_k\} &amp;= \mathcal{R}\{y_k\} \\
+\mathcal{R}\{\delta_j\} &amp;= h''(a_j)\mathcal{R}\{a_j\}\sum_{k} w_{kj}\delta_k \\
+&amp;+ h'(a_j)\sum_{k} v_{kj}\delta_k + h'(a_j)\sum_{k} w_{kj}\mathcal{R}\{\delta_k\}
+\end{aligned}\]
+
+<p>를 구할 수 있다.</p>
+
+<p>마지막으로, 1차 미분값</p>
+
+\[\begin{aligned}
+
+\cfrac{\partial E}{\partial w_{kj}} &amp;= \delta_k z_j \\
+
+\cfrac{\partial E}{\partial w_{ji}} &amp;= \delta_j x_i
+
+\end{aligned}\]
+
+<p>에  $\mathcal{R}{\cdot}$ operator를 사용하여 vector $\mathbf{v}^T\mathbf{H}$의 원소에 대한 expression을 구할 수 있다.</p>
+
+\[\begin{aligned}
+
+\mathcal{R}\bigg\{ \cfrac{\partial E}{\partial w_{kj}} \bigg\} &amp;=  \mathcal{R}\{\delta_k\} z_j + \delta_k \mathcal{R}\{z_j\} \\
+
+
+\mathcal{R}\bigg\{ \cfrac{\partial E}{\partial w_{ji}}\bigg\} &amp;= x_{i}\mathcal{R}\{\delta_j\}
+
+\end{aligned}\]
+
+<p>이때 $\mathbf{v}$에 unit vector를 넣어 Hessian의 element도 구할 수 있다.</p>
+:ET

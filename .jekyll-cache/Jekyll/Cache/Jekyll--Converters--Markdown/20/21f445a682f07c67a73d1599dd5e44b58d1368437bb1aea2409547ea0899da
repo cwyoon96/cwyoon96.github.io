@@ -1,0 +1,189 @@
+I"�.<h3 id="416-fishers-discriminant-for-multiple-classes">4.1.6 Fisher’s discriminant for multiple classes</h3>
+
+<p>이제는 기존의 Binary Classification을 넘어, Fisher’s LDA를 이용해 multiple class discrimination을 어떻게 수행하는지 다룰 것이다. K(&gt;2) 개의 class가 있고, input space의 dimension이 D라고 가정하자 (D &gt; K). 이전의 Binary Classification에서는 1차원으로 데이터를 Project 했지만, 이번에는 더 확장하여 임의의 D’ 차원으로 Project하는 방법을 다룰 것이다. 이를 위해 weight vector $\mathbf{w}_d$ (d = 1,…,D’)를 정의하여 D’개의 `linear feature’ $y_d = \mathbf{w}_d^T\mathbf{x}$ 를 생성할 수 있다. 이를 Vector와 Matrix from으로 한번에 나타내면</p>
+
+\[\mathbf{y} = \mathbf{W}^T\mathbf{x}\]
+
+<p>로 둘 수 있을 것이다.</p>
+
+<p>이제 Binary Classification 때와 동일하게 within-class covariance matrix와 between-class covariance matrix를 정의해야 하는데, within-class covaraince matrix는 이전과 동일한 방식으로</p>
+
+\[\mathbf{S}_W = \sum_{k=1}^{K}\mathbf{S}_k\]
+
+<p>로 정의할 수 있다. (여기서 $\mathbf{S}_k$는 각 class 내에서의 covariance matrix)</p>
+
+<p>Multiple class 간의 between-class covariance matrix의 경우 total covariance matrix</p>
+
+\[\mathbf{S}_T = \sum_{n=1}^N(\mathbf{x}_n - \mathbf{m})(\mathbf{x}_n - \mathbf{m})^T\]
+
+<p>와 covariance matrix 간의 관계</p>
+
+\[\mathbf{S}_T = \mathbf{S}_W + \mathbf{S}_B\]
+
+<p>를 이용하여</p>
+
+\[\mathbf{S_B} = \sum_{k=1}^K N_k(\mathbf{m}_k - \mathbf{m})(\mathbf{m}_k - \mathbf{m})^T\]
+
+<p>가 됨을 알 수 있다.</p>
+
+<p>Linear Features $\mathbf{y}$의 공간에서도 동일한 방법으로 Multiple class 간의 $s_W$ 와 $s_B$를 구할 수 있다. 이후 역시 between-class covariance는 크게하면서 within-class covariance를 작게하기 위해</p>
+
+\[J(W) = Tr\{s_W^{-1}s_B\} = Tr\{(\mathbf{W}\mathbf{S}_W\mathbf{W}^T)^{-1}(\mathbf{W}\mathbf{S}_B\mathbf{W}^T)\}\]
+
+<p>를 최대화하는 $\mathbf{W}$를 찾으면 된다. 이때, optimal $\mathbf{W}$는 $\mathbf{S}_W^{-1}\mathbf{S}_B$의 D’개의 Largest Eigenvalue에 대응하는 Eigenvector들로 구할 수 있음이 알려져있다. 또한, $\mathbf{S}_B$의 formulation 상 rank가 최대 (K-1) 이기 때문에, 의미가 있는 D’는 최대 (K-1)까지만 가능하다는 것을 알 수 있다. 즉, Binary classification에서는 1차원으로의 projection이 최선인 것이다.</p>
+
+<h3 id="417-the-perceptron-algorithm">4.1.7 The Perceptron algorithm</h3>
+
+<p>또 다른 linear discriminant 모델로 Perceptron algorithm을 들 수 있다. 먼저 input vector $\mathbf{x}$를 fixed nonlinear transfromation을 통해 feature vector $\phi(\mathbf{x})$로 mapping한 뒤 (bias term 포함),</p>
+
+\[y(\mathbf{x}) = f(\mathbf{w}^T\phi(\mathbf{x}))\]
+
+<p>식을 통해 $y(\mathbf{x})$를 계산해주는데, 이때 $f(x)$는 step function으로</p>
+
+\[f(x) = \begin{cases}
+  +1, &amp; x \geq 0 \\
+  -1, &amp; x &lt; 0
+\end{cases}\]
+
+<p>의 형태를 가진다. Step function의 값에 맞춰 Perceptron algorithm에서는 target value를 $C_1$의 경우 $t = +1$, $C_2$의 경우 $t = -1$ 로 둔다. 이제, target value를 잘 맞추는 $\mathbf{w}$를 구해주기만 하면 되는데 이를 구하는 analytic한 방법은 없고 gradient descent 방법을 사용한다. Gradient desecent를 이용하기 위해서는 error function을 정의해야 하는데, Perceptron algorithm의 형태를 보면, class를 잘 맞춘 경우에는 $\mathbf{w}^T\phi(\mathbf{x}_n)t_n$ 값이 양수를 class를 잘 맞추지 못한 경우는 음수를 가진다는 것을 알 수 있다. 이를 이용해 perceptron criterion이라 불리는 error function</p>
+
+\[E_p(\mathbf{w}) = - \sum_{n \in M}\mathbf{w}^T\phi(\mathbf{x_n})t_n\]
+
+<p>을 정의하여 (여기서 $M$은 Class를 맞추지 못한 observation들을 의미한다) gradient descent 방법을 통해 $\mathbf{w}$를 update 한다. 즉,</p>
+
+\[\mathbf{w}^{(t+1)} = \mathbf{w}^{(t)} - \eta\bigtriangledown E_p(\mathbf{w}) = \mathbf{w}^{(t)} +\eta\phi(\mathbf{x_n})t_n\]
+
+<p>의 계산을 통해 $\mathbf{w}$를 구할 수 있다. 해당 방법은 perceptron convergence theorem에 따라서 data가 linearly separable 하다면 finite steps 안에 converge 한다는 것이 증명되어 있다. 하지만, linearly separable 하지 않은 경우 perceptron algorithm은 solution을 찾을 수 없으며, 이를 해결하기 위해서 perceptron algorithm 여러개를 이어 붙이는 형태의 알고리즘이 등장하게 된다. 이로인해 perceptron algorithm을 Neural Network의 조상으로 보는 시각도 존재한다.</p>
+
+<h2 id="42-probabilistic-generative-model">4.2 Probabilistic Generative Model</h2>
+
+<p>지금까지 다뤘던 Classification 모델들은 Discriminative approach로 observation이 어느 class에 속하는지만 알려준다는 한계가 있다. 이에 반해 Probabilistic Generative approach는 어느 class에 속할 확률을 모델링하는 방법으로 굉장히 유용한 접근방법이다. 이를 위해 class conditional density 
+<span>$p(\mathbf{x|C_k})$</span>
+와 class priors 
+<span>$p(C_k)$</span>
+를 먼저 구하고, Bayes’ Theorem을 이용해 posterior 
+<span>$p(C_k|\mathbf{x})$</span>
+를 구하는 방식이 일반적이다.</p>
+
+<p>먼저, two class classification 문제를 생각해보자. $C_1$에 대한 posterior probability는</p>
+
+\[\begin{aligned}
+p(C_1|\mathbf{x}) &amp;= \cfrac{p(\mathbf{x}|C_1)p(C_1)}{p(\mathbf{x}|C_1)p(C_1) + p(\mathbf{x}|C_2)p(C_2)} \\ &amp;= \cfrac{1}{1 + exp(-a)} = \sigma(a) 
+\end{aligned}\]
+
+<p>where</p>
+
+\[a = ln\cfrac{p(\mathbf{x}|C_1)p(C_1)}{p(\mathbf{x}|C_2)p(C_2)}\]
+
+<p>으로 구할 수 있다. 여기서 $\sigma$는 sigmoid function</p>
+
+\[\sigma(a) = \cfrac{1}{1 + exp(-a)}\]
+
+<p>을 의미한다.</p>
+
+<p>이를 multiple class로 확장하면,</p>
+
+\[p(C_k|\mathbf{x}) = \cfrac{p(\mathbf{x}|C_k)p(C_k)}{\sum_jp(\mathbf{x}|C_j)p(C_j)} = \cfrac{exp(a_k)}{\sum_jexp(a_j)}\]
+
+<p>where</p>
+
+\[a_k = ln \ p(\mathbf{x}|C_k)p(C_k)\]
+
+<p>로 구할 수 있으며 이는 softmax function의 형태와 동일하다.</p>
+
+<h3 id="421-continuous-inputs">4.2.1 Continuous inputs</h3>
+
+<p>먼저 input vector $\mathbf{x}$가 continuous 인 경우, 특히 class-conditional density가 Gaussian인 경우를 살펴보자.</p>
+
+\[p(\mathbf{x}|C_k) = \cfrac{1}{(2\pi)^{D/2}}\cfrac{1}{|\Sigma|^{1/2}}exp \bigg\{-\cfrac{1}{2}(\mathbf{x}-\mathbf{u}_k)^T\Sigma^{-1}(\mathbf{x}-\mathbf{u}_k)\bigg\}\]
+
+<p>라고 할 때 (Class가 같은 covariance matrix를 공유한다고 가정), 위 식에 대입을 통해</p>
+
+\[p(C_1|\mathbf{x}) = \sigma(\mathbf{w}^T\mathbf{x} + w_0)\]
+
+<p>where</p>
+
+\[\mathbf{w} = \Sigma^{-1}(\mathbf{u}_1 - \mathbf{u}_2)\]
+
+\[w_0 = -\cfrac{1}{2}\mathbf{u}_1^{T}\Sigma^{-1}\mathbf{u_1} + \cfrac{1}{2}\mathbf{u}_2^{T}\Sigma^{-1}\mathbf{u_2} + ln\cfrac{p(C_1)}{p(C_2)}\]
+
+<p>로 정리 됨을 알 수 있다. 즉, posterior 분포가 $\mathbf{x}$에 대해서 linear 한 형태 (sigmoid 함수 안에서)가 된다. 그리고 prior $p(C_k)$는 parallel shift에만 영향을 미침을 알 수 있다.</p>
+
+<p>K개의 class가 있는 경우로 확장하여도 다시 대입을 통해</p>
+
+\[a_k(\mathbf{x}) = \mathbf{w}_k\mathbf{x} + w_{k0}\]
+
+<p>where</p>
+
+\[\mathbf{w}_k = \Sigma^{-1}\mathbf{u}_k\]
+
+\[w_{k0} = -\cfrac{1}{2}\mathbf{u}_k^{T}\Sigma^{-1}\mathbf{u_k} + ln \ p(C_k)\]
+
+<p>임을 알 수 있다. 역시 $\mathbf{x}$에 대해서 linear한 form으로 나타남을 확인 할 수 있는데, 이는 각 class가 동일한 covariance matrix를 공유한다는 가정으로 인한 것으로 모두 다른 covariance matrix를 가정하면 quadratic한 형태를 가지게 되어 quadratic discriminant boundary를 가지게 된다.</p>
+
+<h3 id="422-maximum-likelihood-solution">4.2.2 Maximum likelihood solution</h3>
+
+<p>이제, parametric form을 모두 구했으므로 MLE를 통해 parameter 값을 estimate 해야한다. Prior $p(C_1) = \pi$ 라 하고 $C_1$에 속하는 경우를 $t_n$ =1 로 두자. 그럼 반대로 $p(C_2) = (1 - \pi)$가 될 것이며 $C_2$에 속하는 경우 $t_n$ = 0으로 두자. 그럼</p>
+
+\[p(\mathbf{x}_n,C_1) = p(C_1)p(\mathbf{x_n}|C_1) = \pi N(\mathbf{x_n|\mathbf{u}_1,\Sigma})\]
+
+\[p(\mathbf{x}_n,C_2) = p(C_2)p(\mathbf{x_n}|C_2) = \pi N(\mathbf{x_n|\mathbf{u}_2,\Sigma})\]
+
+<p>가 되어 최종 likelihood function은</p>
+
+\[p(\mathbf{t}|\pi,\mathbf{u}_1,\mathbf{u}_2,\Sigma) = \prod_{n = 1}^{N}[\pi N(\mathbf{x_n|\mathbf{u}_1,\Sigma})]^{t_n}[\pi N(\mathbf{x_n|\mathbf{u}_2,\Sigma})]^{1-t_n}\]
+
+<p>으로 나타난다. 해당식에 log를 취한 뒤 각 parameter로 미분하여 최적값을 찾으면,</p>
+
+\[\hat{\pi} = \cfrac{N_1}{N_1 + N_2}\]
+
+\[\hat{\mathbf{u}}_1 = \cfrac{1}{N_1}\sum_{n = 1}^{N}t_n\mathbf{x_n}\]
+
+\[\hat{\mathbf{u}}_2 = \cfrac{1}{N_2}\sum_{n = 1}^{N}(1 - t_n)\mathbf{x_n}\]
+
+\[\hat{\Sigma} = \cfrac{N_1}{N}S_1 + \cfrac{N_2}{N}S_2\]
+
+<p>where</p>
+
+\[S_1 = \cfrac{1}{N_1}\sum_{n \in C_1}(\mathbf{x}_n - \mathbf{u}_1)(\mathbf{x}_n - \mathbf{u}_1)^{T}\]
+
+\[S_2 = \cfrac{1}{N_2}\sum_{n \in C_2}(\mathbf{x}_n - \mathbf{u}_2)(\mathbf{x}_n - \mathbf{u}_2)^{T}\]
+
+<p>로 원하는 값들을 찾을 수 있다. Multiple class의 경우에도 동일한 방법을 통해 각 parameter를 어렵지 않게 찾을 수 있다.</p>
+
+<h3 id="423-discrete-features">4.2.3 Discrete features</h3>
+
+<p>이제 Continuous 한 경우가 아닌 input이 discrete 한 경우를 생각해보자. 간단하게 binary case를 생각해보면, D dimension input vector는 각 $x_i \in {0,1}, i = 1,…,D$ 로 이루어질 것이고 전체 distribution은 각 class 별로 $2^D$개의 숫자로 이루어진 table로 표현될 것이다. (Summation constraint 때문에 실제 independent한 변수는 $(2^D - 1)$개)</p>
+
+<p>여기서 각 feature value가 $C_k$에 대해 conditionally independent 하다는 naive Bayes 가정을 하면, class-conditional distribution은</p>
+
+\[p(\mathbf{x}|C_k) = \prod_{i = 1}^{D}u_{ki}^{x_i}(1 - u_{ki})^{1-x_i}\]
+
+<p>의 형태를 가진다. 이후, 이를 위의 $a_k$를 구하는 식에 대입하면,</p>
+
+\[a_k(\mathbf{x}) = \sum_{i = 1}^{D}\{x_iln \ u_{ki} + (1-x_i) ln \ (1-u_{ki})\} + ln \ p(C_k)\]
+
+<p>로 나타남을 알 수 있다. Binary case가 아닌 Multicategory case에도 같은 방식으로 식을 유도할 수 있다.</p>
+
+<h3 id="424-exponential-family">4.2.4 Exponential Family</h3>
+
+<p>사실 Continuous (Normal) 혹은 Discrete (Bernoulli)한 경우 외에도 Exponential Family에서 속하는 모든 확률 분포를 class-conditional distribution으로 사용할 수 있기 때문에 다양한 형태의 input vector에 대해서 Generative Model을 만들어낼 수 있다.</p>
+
+<p>일반적인 Exponential Family의 p.d.f.는</p>
+
+\[p(\mathbf{x}|\boldsymbol{\lambda}_k) = h(\mathbf{x})g(\boldsymbol{\lambda}_k)exp\{\boldsymbol{\lambda}_k^{T}\mathbf{u}(\mathbf{x})\}\]
+
+<p>로 나타나는데 (Class 별로 $\boldsymbol{\lambda}_k$가 다른 값을 가진다고 가정), 이 중 $u(\mathbf{x}) = \mathbf{x}$ 인 경우만 생각하고 scaling parameter $s$를 도입하면,</p>
+
+\[p(\mathbf{x}|\boldsymbol{\lambda}_k, s) = \cfrac{1}{s}h\bigg(\cfrac{1}{s}\mathbf{x}\bigg)g(\boldsymbol{\lambda}_k)exp\bigg\{\cfrac{1}{s}\boldsymbol{\lambda}_k^{T}\mathbf{x}\bigg\}\]
+
+<p>으로 나타낼 수 있다. 해당 class-conditional distribution을 이용하면 binary classification의 경우에는</p>
+
+\[a(\mathbf{x}) = (\boldsymbol{\lambda}_1 - \boldsymbol{\lambda}_2)^{T}\mathbf{x} + ln \ g(\boldsymbol{\lambda}_1) - ln \ g(\boldsymbol{\lambda}_2) + ln \ p(C_2) - ln \ p(C_1)\]
+
+<p>으로 나타나며 multiple class의 경우</p>
+
+\[a_k(\mathbf{x}) = \boldsymbol{\lambda}_k^T\mathbf{x} + ln \ g(\boldsymbol{\lambda}_k) + ln \ p(C_k)\]
+
+<p>로 나타나는데, 모두 $\mathbf{x}$ 에 대해서 linear 한 형태를 가지고 있음을 알 수 있다.</p>
+:ET

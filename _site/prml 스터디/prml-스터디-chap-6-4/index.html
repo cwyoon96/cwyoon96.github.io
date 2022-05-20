@@ -1,0 +1,799 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>PRML 스터디 Chap.6.4 | Statistics and Machine Learning Lab by cwyoon96</title>
+<meta name="description" content="6.4.5 Gaussian processes for classification">
+
+
+  <meta name="author" content="cwyoon96">
+  
+  <meta property="article:author" content="cwyoon96">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Statistics and Machine Learning Lab by cwyoon96">
+<meta property="og:title" content="PRML 스터디 Chap.6.4">
+<meta property="og:url" content="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-4/">
+
+
+  <meta property="og:description" content="6.4.5 Gaussian processes for classification">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-03-16T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-4/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "cwyoon96",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Statistics and Machine Learning Lab by cwyoon96 Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Statistics and Machine Learning Lab by cwyoon96
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">cwyoon96</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>통계학 그리고 머신러닝을 공부하는 사람입니다.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Daejeon, South Korea</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/cwyoon96" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="PRML 스터디 Chap.6.4">
+    <meta itemprop="description" content="6.4.5 Gaussian processes for classification">
+    <meta itemprop="datePublished" content="2022-03-16T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-4/" class="u-url" itemprop="url">PRML 스터디 Chap.6.4
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#645-gaussian-processes-for-classification">6.4.5 Gaussian processes for classification</a></li><li><a href="#646-laplace-approximation">6.4.6 Laplace approximation</a></li><li><a href="#647-connection-to-neural-networks">6.4.7 Connection to neural networks</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <h3 id="645-gaussian-processes-for-classification">6.4.5 Gaussian processes for classification</h3>
+
+<p>이번 절에서는 Gaussian process를 이용하여 classification 문제를 푸는 방법을 소개한다. 기본적으로 Gaussian process는 real axis 전체에서 prediction을 하기 때문에 sigmoid function $\sigma(x)$을 이용해 probability를 predict 할 수 있도록 해야한다. Function $a(\mathbf{x})$에 대한 Gaussian process를 구했다고 가정하면, target variable $t$의 분포는 Bernoulli distribution</p>
+
+\[p(t|a) = \sigma(a)^{t}(1 - \sigma(a))^{1-t}\]
+
+<p>로 나타날 것이다.</p>
+
+<p>먼저 $\mathbf{a}_{N+1}$에 대한 Gaussian process prior는</p>
+
+\[p(\mathbf{a}_{N+1}) = \mathcal{N}(\mathbf{a}_{N+1}|\mathbf{0},\mathbf{C}_{N+1})\]
+
+<p>로 정의된다. 하지만 regression case와는 다르게 covariance matrix에 noise가 추가되지는 않는다 (모든 label이 correct하다고 가정). 하지만, covariance matrix가 positive definite임을 확실시하기 위해 noise와 유사한 term $\nu$를 추가해</p>
+
+\[C(\mathbf{x}_n,\mathbf{x}_m) = k(\mathbf{x}_n,\mathbf{x}_m) + \nu \delta_{nm}\]
+
+<p>으로 covariance matrix $\mathbf{C}_{N+1}$을 정의한다.</p>
+
+<p>이제, predictive distribution은</p>
+
+\[p(t_{N+1} = 1|\mathbf{t}_N) = \int p(t_{N+1} = 1|a_{N+1})p(a_{N+1}|\mathbf{t}_{N})da_{N+1}\]
+
+<p>where</p>
+
+\[p(t_{N+1} = 1|a_{N+1}) = \sigma(a_{N+1})\]
+
+<p>으로 주어진다. 하지만 이 적분은 intractable 하기 때문에 posterior distribution 
+$p(a_{N+1}|\mathbf{t}_N)$
+에 대한 Gaussian approximation을 진행해야 한다. 이를 위해 <em>variational inference</em>, <em>expectation propagation</em> 등을 사용할 수도 있지만, 여기서는 Laplace approximation을 통한 방법을 알아보자.</p>
+
+<h3 id="646-laplace-approximation">6.4.6 Laplace approximation</h3>
+
+<p>Bayes’ theorem을 통해 $a_{N+1}$에 대한 posterior distribution은</p>
+
+\[\begin{aligned}
+p(a_{N+1}|\mathbf{t}_N) &amp;= \int p(a_{N+1},\mathbf{a}_N | \mathbf{t}_N)d\mathbf{a}_{N} \\ &amp;= \cfrac{1}{p(\mathbf{t}_N)} \int p(a_{N+1},\mathbf{a}_N)p(\mathbf{t}_N | a_{N+1},\mathbf{a}_N)d\mathbf{a}_{N} \\ &amp;= \cfrac{1}{p(\mathbf{t}_N)} \int p(a_{N+1}| \mathbf{a}_N)p(\mathbf{a}_N)p(\mathbf{t}_N | \mathbf{a}_N)d\mathbf{a}_N \\ &amp; = \int p(a_{N+1}| \mathbf{a}_N)p(\mathbf{a}_N|\mathbf{t}_N)d\mathbf{a}_N \ \ \ - (*)
+\end{aligned}\]
+
+<p>로 정리된다. 2번째에서 3번째 줄으로 넘어갈 때는</p>
+
+\[p(\mathbf{t}_N|a_{N+1},\mathbf{a}_N) = p(\mathbf{t}_N|\mathbf{a}_N)\]
+
+<p>임을 사용했다. 또한, regression case에서 정리한 결과를 이용해 conditional distribution 
+$p(a_{N+1}|\mathbf{a}_N)$
+은</p>
+
+\[p(a_{N+1}|\mathbf{a}_N) = \mathcal{N}(a_{N+1}|\mathbf{k}^{T}\mathbf{C}_{N}^{-1}\mathbf{a}_N, c - \mathbf{k}^{T}\mathbf{C}_{N}^{-1}\mathbf{k})\]
+
+<p>로 주어진다. 따라서 posterior distribution 
+<span>$p(\mathbf{a}_N|\mathbf{t}_N)$</span>
+에 대한 Laplace approximation을 구하면 (*)식에 따라 적분을 하여 
+<span>$a_{N+1}$</span>
+에 대한 posterior distribution을 구할 수 있음을 알 수 있다.</p>
+
+<p>Prior $p(\mathbf{a}_N)$는 zero mean에 covariance matrix $\mathbf{C}_N$으로 주어지며, data term은</p>
+
+\[p(\mathbf{t}_N | \mathbf{a}_N) = \prod_{n = 1}^{N}\sigma(a_n)^{t_n}(1-\sigma(a_n))^{1-t_n} = \prod_{n=1}^{N}e^{a_n t_n}\sigma(-a_n)\]
+
+<p>으로 주어진다. 이제, additive normalization constant 
+$p(\mathbf{t}_N)$
+를 제외한 
+$p(\mathbf{a}_N|\mathbf{t}_N)$
+의 logarithm에 대한 Taylor exansion을 하면</p>
+
+\[\begin{aligned}
+\Psi(\mathbf{a}_N) &amp;= ln \ p(\mathbf{a}_N) + ln \ p(\mathbf{t}_N|\mathbf{a}_N) \\ &amp;= -\cfrac{1}{2}\mathbf{a}_{N}^{T}\mathbf{C}_{N}^{-1}\mathbf{a}_N - \cfrac{N}{2}ln(2\pi) - \cfrac{1}{2}ln |\mathbf{C}_N| + \mathbf{t}_{N}^{T}\mathbf{a}_N \\ &amp;-\sum_{n=1}^{N}ln(1 + e^{a_n}) + const 
+\end{aligned}\]
+
+<p>로 주어짐을 알 수 있다.</p>
+
+<p>먼저, posterior distribution의 mode 값을 구하기 위해 graident를 계산하면</p>
+
+\[\bigtriangledown \Psi(\mathbf{a}_N) = \mathbf{t}_N - \boldsymbol{\sigma}_N - \mathbf{C}_{N}^{-1}\mathbf{a}_N\]
+
+<p>으로 주어지는데, $\sigma(a_n)$의 벡터 형태인 $\boldsymbol{\sigma}_N$가 $\mathbf{a}_N$에 nonlinear하게 depend하기 때문에 단순히 gradient를 0으로 두는 것 만으로는 mode를 구할 수 없다. 따라서 Newton-Raphson 방법과 같은 알고리즘을 써야하는데 이를 위해 second derivative</p>
+
+\[\bigtriangledown \bigtriangledown \Psi(\mathbf{a}_N) = -\mathbf{W}_N - \mathbf{C}_{N}^{-1}\]
+
+<p>where $\mathbf{W}_N$ is a diagonal matrix with elements $\sigma(a_n)(1-\sigma(a_n))$</p>
+
+<p>를 사용해야 한다. 이때, diagonal element가 (0,1/4) 범위 내에서만 존재하기 때문에 $\mathbf{W}_N$은 poistive definite 임을 알 수 있다. 또한 $\mathbf{C}_N$도 p.d. 이기 때문에 (역행렬도 p.d.), 그 합 또한 p.d. 임을 알 수 있다. 따라서 Hessian matrix $A = - \bigtriangledown \bigtriangledown \Psi(\mathbf{a}_N)$가 p.d.임을 알 수 있고 posterior distribution이 log convex하여 유일한 global maxima를 가짐을 알 수 있다. 하지만, Hessian이 $\mathbf{a}_N$에 대한 function으로 주어지기에 posterior는 여전히 Gaussian은 아니다.</p>
+
+<p>이제, 4장에서 다뤘던 Newton-Raphsonn formula를 이용한 $\mathbf{a}_N$에 대한 iterative update 식은</p>
+
+\[\mathbf{a}_{N}^{new} = \mathbf{C}_N(\mathbf{I} + \mathbf{W}_N \mathbf{C}_N)^{-1}\{\mathbf{t}_N - \boldsymbol{\sigma}_N + \mathbf{W}_N \mathbf{a}_N \}\]
+
+<p>으로 주어진다. Mode 값 $\mathbf{a}_N^{*}$에서는 gradient 값은 0이 될 것이기 때문에</p>
+
+\[\mathbf{a}_N^{*} = \mathbf{C}_N (\mathbf{t}_N - \boldsymbol{\sigma}_N)\]
+
+<p>식이 성립할 것이다. 이제 $\mathbf{a}_N^{*}$에서의 Hessian matrix $H$를 계산하면 posterior distribution에 대한 Gaussian approximation은</p>
+
+\[q(\mathbf{a}_N) = \mathcal{N}(\mathbf{a}_N | \mathbf{a}_N^{*},H^{-1})\]
+
+<p>으로 구할 수 있다.</p>
+
+<p>이제, 원래 구하고자 하였던 
+$p(a_{N+1}|\mathbf{t}_N)$
+은 linear-Gaussian model에 따라</p>
+
+\[\begin{aligned}
+\mathbb{E}[a_{N+1}|\mathbf{t}_N] &amp;= \mathbf{k}^{T}(\mathbf{t}_N - \boldsymbol{\sigma}_N) \\ \text{var}[a_{N+1}|\mathbf{t}_N] &amp;= c - \mathbf{k}^{T}(\mathbf{W}_N^{-1} + \mathbf{C}_N)^{-1}\mathbf{k}
+\end{aligned}\]
+
+<p>의 값을 가지는 Gaussian distribution으로 approximate 할 수 있다. 최종적으로 predictive distribution은 6.4.5절에서 주어진 적분식을 통해 구할 수 있다.</p>
+
+<p>Regression case에서와 마찬가지로 classification case에서도 covariance function에 들어간 parameter $\boldsymbol{\theta}$를 최적화하는 작업을 해야한다. Likelihood function은</p>
+
+\[p(\mathbf{t}_N|\boldsymbol{\theta}) = \int p(\mathbf{t}_N|\mathbf{a}_N)p(\mathbf{a}_N|\boldsymbol{\theta})d\mathbf{a}_N\]
+
+<p>으로 주어지는데, 역시 적분이 intractable하기 때문에 다시 Laplace approximation을 사용한다. 4.4절에서 정리한 결과를 다시 이용하여</p>
+
+\[ln \ p(\mathbf{t}_N|\boldsymbol{\theta}) = \Psi(\mathbf{a}_N^{*}) - \cfrac{1}{2}ln|\mathbf{W}_N + \mathbf{C}_{N}^{-1}| + \cfrac{N}{2}ln(2\pi)\]
+
+<p>where</p>
+
+\[\Psi(\mathbf{a}_N^{*}) = ln \ p(\mathbf{a}_N^{*}|\boldsymbol{\theta}) + ln \ p(\mathbf{t}_N|\mathbf{a}_N^{*})\]
+
+<p>으로 주어진다. 이제 gradient를 구하면 되는데, covariance matrix $\mathbf{C}_N$의 $\boldsymbol{\theta}$에 대한 explicit한 dependence로 인한 term과 $\mathbf{a}_N^{*}$의 $\boldsymbol{\theta}$에 대한 dependence로 인한 term 2가지를 생각할 수 있다.</p>
+
+<p>먼저, explicit dependence term은</p>
+
+\[\begin{aligned}
+\cfrac{\partial ln \ p(\mathbf{t}_N|\boldsymbol{\theta})}{\partial \theta_j} \ = \ &amp;\cfrac{1}{2}\mathbf{a}_{N}^{*T}\mathbf{C}_{N}^{-1}\cfrac{\partial \mathbf{C}_N}{\partial \theta_j}\mathbf{C}_{N}^{-1}\mathbf{a}_{N}^{*} \\ &amp;- \cfrac{1}{2}Tr\bigg[ (\mathbf{I} + \mathbf{C}_N\mathbf{W}_N)^{-1}\mathbf{W}_N\cfrac{\partial \mathbf{C}_N}{\partial \theta_j} \bigg]
+\end{aligned}\]
+
+<p>으로 주어진다.</p>
+
+<p><span>$\mathbf{a}_N^{*}$</span>
+의 parameter에 대한 dependence로 인한 term에서 
+<span>$\Psi(\mathbf{a}_N)$</span>
+는 
+<span>$\mathbf{a}_N^{*}$</span>
+에서 gradient가 0이 되도록 Laplace approximation을 사용했기 때문에, 2번째 term에 대해서만 계산하면 된다는 것을 알 수 있다. 2번째 term에 대한 gradient는</p>
+
+\[\begin{aligned}
+-\cfrac{1}{2}&amp;\sum_{n = 1}^{N} \cfrac{\partial ln|\mathbf{W}_N + \mathbf{C}_N^{-1}|}{\partial a_{n}^{*}}\cfrac{\partial a_n^*}{\partial \theta_j} \\ &amp;= -\cfrac{1}{2}\sum_{n=1}^{N}\big[ (\mathbf{I}+ \mathbf{C}_N\mathbf{W}_N)^{-1}\mathbf{C}_N \big]_{nn}\sigma_{n}^{*}(1 - \sigma_{n}^{*})(1-2\sigma_{n}^{*})\cfrac{\partial a_{n}^{*}}{\partial \theta_j}
+\end{aligned}\]
+
+<p>으로 구할 수 있다. 또한, 위에 주어진 $\mathbf{a}_N^{*}$에 대한 식을 이용하여</p>
+
+\[\cfrac{\partial a_{n}^{*}}{\partial \theta_j} = (\mathbf{I} + \mathbf{W}_N \mathbf{C}_N)^{-1}\cfrac{\partial \mathbf{C}_N}{\partial \theta_j}(\mathbf{t}_N - \boldsymbol{\sigma}_N)\]
+
+<p>임을 알 수 있다. 이제 필요한 모든 term들을 구했으므로 graident를 계산할 수 있고, nonlinear optimization algorithm을 이용해 최적의 $\boldsymbol{\theta}$를 구해주면 된다.</p>
+
+<h3 id="647-connection-to-neural-networks">6.4.7 Connection to neural networks</h3>
+
+<p>Neural network 파트에서 hidden unit의 개수 M을 충분히 늘리면 two-layer network가 어떤 function이든 approximate할 수 있다는 것을 배웠었다. Neal (1996)은 Bayesian neural network에서 $\mathbf{w}$에 대한 특정 prior distribution들을 가정하였을 때, neural network에서 생성된 함수의 분포가 M이 무한대에 가까워짐에 따라 Gaussian process를 따르게 된다는 것을 밝혀냈다. 하지만, M이 무한대로 가면 output은 서로 indenpendent 하게 될 것이고 이렇게 되면 같은 hidden unit을 공유한다는 neural network의 장점을 살리지 못한다는 장점이 있다.</p>
+
+<p>또한, Gaussian process는 covariance function (kernel function)을 어떻게 정의하냐에 따라 결과가 달라지는 것을 확인했는데, Willianms (1998)는 hidden unit activation function을 probit 혹은 Gaussian으로 설정하는 지에 따른 covariance function의 explicit form을 제시하였다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#prml" class="page__taxonomy-item p-category" rel="tag">PRML</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#prml-%EC%8A%A4%ED%84%B0%EB%94%94" class="page__taxonomy-item p-category" rel="tag">PRML 스터디</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-03-16T00:00:00+09:00">March 16, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=PRML+%EC%8A%A4%ED%84%B0%EB%94%94+Chap.6.4%20http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-6-4%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-6-4%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-6-4%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-1-2/" class="pagination--pager" title="PRML 스터디 Chap.6.1-2
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-1-2/" rel="permalink">PRML 스터디 Chap.6.1-2
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">6. Kernel Methods
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-7/" rel="permalink">PRML 스터디 Chap.5.7
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">5.5.5 Training with transformed data
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-4/" rel="permalink">PRML 스터디 Chap.5.4
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">5.4 The Hessian Matrix
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-2-3/" rel="permalink">PRML 스터디 Chap.5.2-3
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">5.2.2 Local quadratic approximation
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 cwyoon96. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+	extensions: ["tex2jax.js"],
+	jax: ["input/TeX", "output/HTML-CSS"],
+	tex2jax: {
+		inlineMath: [ ['$','$'] ],
+		processEscapes: true
+	},
+	"HTML-CSS": { availableFonts: ["TeX"] }
+});
+</script>
+
+
+  </body>
+</html>

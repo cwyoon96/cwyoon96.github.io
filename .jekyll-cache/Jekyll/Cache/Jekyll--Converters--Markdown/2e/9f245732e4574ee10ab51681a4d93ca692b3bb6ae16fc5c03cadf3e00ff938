@@ -1,0 +1,147 @@
+I"�'<h2 id="43-probabilistic-discriminative-model">4.3 Probabilistic Discriminative Model</h2>
+
+<p>4.2절에서는 
+<span>$p(\mathbf{x}|C_k)$ </span>
+에 대한 분포 가정을 통해 Bayes Thm을 이용하여 posterior 
+<span>$p(C_k|\mathbf{x})$ </span>
+를 구하는 과정을 설명했다. 그 결과 
+<span>$p(C_k|\mathbf{x})$</span>
+가 
+$\mathbf{x}$
+에 대한 linear form으로 나타나는 것을 확인할 수 있었다. 4.3절에서는 거기서 착안하여, 
+<span>$p(\mathbf{x}|C_k)$</span>
+에 대한 분포가정 없이 Generalized Linear Model을 이용해 Probabilistic Discriminative Model을 생성하고 parameter를 구하는 방법을 소개한다.</p>
+
+<h3 id="431-fixed-basis-functions">4.3.1 Fixed basis functions</h3>
+
+<p>4장 에서는 지금까지 input vector $\mathbf{x}$의 공간에서 classification model들을 생각했지만, 3장에서 다룬 것처럼 basis function $\phi(\mathbf{x})$를 이용하여 non-linear한 transform을 거친 후 feature space에서 classification model을 생각할 수 있다. 이를 통해 original input space에서 linear classification이 불가능한 문제도 feature space에서 linear 하게 해결할 수 있기 때문에 classification에서도 매우 중요한 방법이다. 물론, 이러한 fixed basis function 모델은 나름대로의 한계점들이 존재하기 때문에, 이후 chapter에서 basis function을 데이터에 맞춰 adapt하는 방법을 다룰 것이다.</p>
+
+<h3 id="432-logistic-regression">4.3.2 Logistic regression</h3>
+
+<p>먼저 two-class classification 문제를 생각해보자. 4.2절에서 continuous input의 경우 
+<span>$p(C_1|\mathbf{x}) = \sigma(\mathbf{w}^{T}\mathbf{x}+w_0)$</span>
+의 형태로 주어지는 것을 보였고, 
+<span>$\mathbf{w},w_0$</span>
+는 Gaussian Parameter들의 조합으로 주어졌다. 여기서 착안하여, 임의의 parameter 
+<span>$\mathbf{w}$</span>
+에 대해</p>
+
+\[p(C_1|\phi) = y(\phi) = \sigma(\mathbf{w}^T\phi)\]
+
+<p>식을 만족하는 모델을 생각할 수 있는데, (여기서 $\phi$는 4.3.1에서의 feature vector $\phi(\mathbf{x})$) 이것이 Logistic Regression Model 이다.</p>
+
+<p>Logistic regression의 장점은 4.2절에서 Gaussian class conditional density를 통해 Generative Model을 만들었던 것에 비해 추정해야할 parameter의 개수가 훨씬 적다는 것이다. Gaussian density를 이용할 경우 D-dimension feature에 대해 $D(D+5)/2 + 1$ 개의 parameter를 추정해야 하지만, Logistic regression의 경우 $\mathbf{w}$ 안의 $D$개의 parameter만 추정하면 된다.</p>
+
+<p>이제 다시 Maximum Likelihood Estimation을 이용해 parameter를 추정하면 되는데, likelihood function은</p>
+
+\[p(\mathbf{t}|\mathbf{w}) = \prod_{n = 1}^{N}y_n^{t_n}(1-y_n)^{1-t_n}\]
+
+<p>의 형태를 가지며 여기서 $y_n = \sigma(\mathbf{w}^T\phi_n)$을 의미한다. Likelihood function에 다시 -log 를 취해서 error function의 형태로 만들어주면</p>
+
+\[E(\mathbf{w}) = -\sum_{n = 1}^{N}\{t_nln\ y_n  + (1-t_n)ln \ (1-y_n) \}\]
+
+<p>의 형태가 되어 그 gradient는</p>
+
+\[\bigtriangledown E(\mathbf{w}) = \sum_{n = 1}^{N}(y_n - t_n)\phi_n\]
+
+<p>의 형태를 갖는다. 이는 error에 basis function vector를 곱한 형태로, 3장에서 linear regression model과 동일한 형태로 주어진 것을 알 수 있다. 또한, 이러한 MLE 추정은 linearly separable 한 데이터에서 극심한 over-fitting 문제를 보이는데, 이런 경우 MAP를 사용하거나 error function에 regularization을 주는 것을 통해 해결할 수 있다.</p>
+
+<h3 id="433-iterative-reweighted-least-squares">4.3.3 Iterative reweighted least squares</h3>
+
+<p>Logistic regression의 경우 sigmoid function의 non-linearity로 인해 MLE의 closed form solution이 존재하지 않기 때문에 Newton-Raphson iterative optimization</p>
+
+\[\mathbf{w}^{new} = \mathbf{w}^{old} - H^{-1}\bigtriangledown E(\mathbf{w})\]
+
+<p>을 통해 문제를 해결하는데, 여기서 H는 $E(\mathbf{w})$의 Hessian matrix이다. (참고로 linear regression 문제에 Newton-Raphson을 사용하면 1 step에 문제가 풀린다.) 이제 해당 방법을 logistic regression에 적용하면,</p>
+
+\[\begin{aligned}
+\bigtriangledown E(\mathbf{w}) &amp;= \sum_{n=1}^{N}(y_n-t_n)\phi_n = \Phi^T(\mathbf{y}-\mathbf{t}) \\
+H &amp;= \sum_{n=1}^{N}y_n(1-y_n)\phi_n\phi_n^T = \Phi^TR\Phi
+\end{aligned}\]
+
+<p>임을 이용해서 (여기서 $R$은 $R_{nn} = y_n(1-y_n)$를 갖는 diagonal matrix이다.)</p>
+
+\[\mathbf{w}^{new} = (\Phi^TR\Phi)^{-1}\Phi^TR\mathbf{z}\]
+
+<p>식을 세울 수 있다. 여기서 $\mathbf{z}$는</p>
+
+\[\mathbf{z} = \Phi\mathbf{w}^{old} - R^{-1}(\mathbf{y} - \mathbf{t})\]
+
+<p>를 의미한다.사실 위 형태는 weighted least square의 형태와 동일하며 실제로 $R$은 $t$의 variance matrix로 해석할 수 있다. 또한, $R$이 constant가 아닌 $\mathbf{w}$를 포함하는 matrix이기 때문에 iterative하게 계산을 해야하는데, 이로 인해 이 알고리즘을 iterative reweighted least square (IRLS)라고 부른다. 참고로, $H$가 positive definite 하다는 특성으로 인해 error function은 $\mathbf{w}$의 concave 함수가 되어 at most one unique solution을 찾을 수 있다.</p>
+
+<h3 id="434-multiclass-logistic-regression">4.3.4 Multiclass logistic regression</h3>
+
+<p>이러한 logistic regression의 개념을 4.2절에서 다뤘던 multiclass로도 확장할 수 있는데</p>
+
+\[p(C_k|\phi) = y_k(\phi) = \cfrac{exp(a_k)}{\sum_jexp(a_j)}\]
+
+<p>where $a_k = \mathbf{w}_k^T\phi$ 로 두고 $\mathbf{w}_k$에 대한 maximum likelihood를 직접적으로 계산하면 된다.</p>
+
+<p>Likelihood function은</p>
+
+\[p(\mathbf{T}|\mathbf{w}_1,...,\mathbf{w}_k) = \prod_{n=1}^{N}\prod_{k=1}^{K}y_{nk}^{t_{nk}}\]
+
+<p>로 주어지며, 여기서 $y_{nk} = y_k(\phi_n)$를 의미한다. 이후 Logistic regression과 동일한 과정을 거쳐 Newton-Raphson method를 사용해 문제를 해결할 수 있다.</p>
+
+<p>참고로, Multiclss에서도 error function에 대한 gradient가</p>
+
+\[\bigtriangledown_{\mathbf{w}_{j}}E(\mathbf{w_1},...,\mathbf{w}_k) = \sum_{n=1}^N(y_{nj} - t_{nj})\phi_n\]
+
+<p>으로 나타나 error에 feature vector를 곱한 형태가 되는데, 사실 이는 general result로 4.3.6절에서 이에 대해 다룰 것이다.</p>
+
+<h3 id="435-probit-regression">4.3.5 Probit regression</h3>
+
+<p>다시 two-class 문제로 돌아와서 sigmoid function이 아닌 다른 activation fuction을 이용하는 더 general한 케이스가 있을 수 있는지 살펴보자. 이를 위해 noisy threshold model을 생각할 수 있는데, $a_n = \mathbf{w}^T\phi_n$ 에 대해</p>
+
+\[\begin{cases}
+      t_n = 1 &amp; \text{if}\ a_n \geq \theta \\
+      t_n = 0, &amp; \text{otherwise}
+\end{cases}\]
+
+<p>인 모델을 생각해보자. 여기서 $\theta$를 probability density $p(\theta)$에서 draw 한다고 생각하면 activation function은</p>
+
+\[f(a) = \int_{-\infty}^{a}p(\theta)d\theta\]
+
+<p>로 주어질 것이며, 특히 density $p(\theta)$를 zero mean unit variance Gaussian이라 가정하면 probit function $\Phi(a)$를 activation function으로 사용할 수 있으며, 이런 경우를 probit regression이라 부른다. 기본적으로 probit regression은 logistic regression과 유사한 결과를 보여주지만 이후 4.5 절에서 Bayesian treatment와 관련하여 probit model을 다룰 것이다.</p>
+
+<p>Probit regression의 특징 중 하나는 logistic regression에 비해 outlier에 더 sensitive 하다는 것이지만 기본적으로 logistic regession과 probit regression 모두 data가 올바르게 label 되었다고 가정한다. 만약, mislabeling에 대한 부분을 생각한다면 mislabel에 대한 확률 $\epsilon$을 probabilistic model에 incorporate 하여</p>
+
+\[p(t|\mathbf{x}) = (1 - \epsilon)\sigma(\mathbf{x}) + \epsilon(1-\sigma(\mathbf{x}))\]
+
+<p>로 두고 문제를 풀 수도 있다.</p>
+
+<h3 id="436-canonical-link-functions">4.3.6 Canonical link functions</h3>
+
+<p>앞서 linear regression, logistic regression 그리고 multiclass logistic regression에서 모두 gradient가 error에 feature vector를 곱한 형태로 나온다는 것을 확인했다. 이번 절에서는 이 result가 특정 조건에서 general result임을 보일 것이다.</p>
+
+<p>먼저 target variable의 conditional distribution이 exponential family 임을 가정하여</p>
+
+\[p(t|\eta,s) = \cfrac{1}{s}h\bigg(\cfrac{t}{s}\bigg)g(\eta)exp\bigg\{\cfrac{\eta t}{s}\bigg\}\]
+
+<p>으로 쓰자. 그러면 $t$의 conditional mean $y$는</p>
+
+\[y \equiv E(t|\eta) = -s\cfrac{d}{d\eta}ln \ g(\eta)\]
+
+<p>로 주어진다. 이러한 $y$와 $\eta$ 사이의 관계를 이용하여 반대로 $\eta = \psi(y)$를 만족하는 $\psi$를 찾을 수 있을 것이다. 또한 log likelihood function을 구하면</p>
+
+\[ln \ p(\mathbf{t}|\eta,s) = \sum_{n = 1}^{N}ln \ p(t_n|\eta,s) = \sum_{n=1}^{N}\bigg\{ ln \ g(\eta_n) + \cfrac{\eta_n t_n}{s}\bigg\} + const\]
+
+<p>로 주어진다.</p>
+
+<p>이제 다시 generalized linear model을 정의하여 $y_n = f(a_n) =f(\mathbf{w}^T\phi_n)$ 로 두자. 여기서 $f$ 는 activation function, $f^{-1}$는 link function으로 정의된다. Log likelihood function을 $\mathbf{w}$에 대해 미분하면</p>
+
+\[\begin{aligned}
+\bigtriangledown_{\mathbf{w}}ln \ p(\mathbf{t}|\eta,s) &amp;= \sum_{n = 1}^{N}\bigg\{\cfrac{d}{d\eta_n} \ ln \ g(\eta_n) + \cfrac{t_n}{s}\bigg\}\cfrac{d\eta_n}{dy_n}\cfrac{dy_n}{da_n}\bigtriangledown_{a_n} \\
+&amp;= \sum_{n = 1}^{N}\cfrac{1}{s}\{t_n - y_n\}\psi'(y_n)f'(a_n)\phi_n
+\end{aligned}\]
+
+<p>으로 gradient를 구할 수 있다. 이때, link function을</p>
+
+\[f^{-1}(y) = \psi(y)\]
+
+<p>로 두면 $f(\psi(y)) = y$로 부터 $f’(\psi)\psi’(y) = 1$ 임을 알 수 있고 (chain rule), $a_n = f^{-1}(y_n)$임을 이용하여 $a = \psi(y_n)$ 로 주어지기 때문에 최종적으로 $f’(a_n)\psi’(y_n) = 1$ 로 주어진다. 따라서 graidient가</p>
+
+\[\bigtriangledown_{\mathbf{w}}E(\mathbf{w}) =\sum_{n = 1}^{N}\cfrac{1}{s}\{t_n - y_n\}\phi_n\]
+
+<p>로 주어져 우리가 아는 error에 feature vector의 곱으로 나타남을 보일 수 있다. 이때 해당 link function을 canonical link fuction이라 부른다.</p>
+:ET

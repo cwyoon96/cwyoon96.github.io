@@ -1,0 +1,728 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>PRML 스터디 Chap.3.4 | Statistics and Machine Learning Lab by cwyoon96</title>
+<meta name="description" content="(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)">
+
+
+  <meta name="author" content="cwyoon96">
+  
+  <meta property="article:author" content="cwyoon96">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Statistics and Machine Learning Lab by cwyoon96">
+<meta property="og:title" content="PRML 스터디 Chap.3.4">
+<meta property="og:url" content="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-3-4/">
+
+
+  <meta property="og:description" content="(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-11-19T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-3-4/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "cwyoon96",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Statistics and Machine Learning Lab by cwyoon96 Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Statistics and Machine Learning Lab by cwyoon96
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">cwyoon96</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>통계학 그리고 머신러닝을 공부하는 사람입니다.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Daejeon, South Korea</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/cwyoon96" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="PRML 스터디 Chap.3.4">
+    <meta itemprop="description" content="(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)">
+    <meta itemprop="datePublished" content="2021-11-19T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-3-4/" class="u-url" itemprop="url">PRML 스터디 Chap.3.4
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#34-bayesian-model-comparison">3.4 Bayesian Model Comparison</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>(본 내용은 독자가 학부 확률론 및 수리통계학 지식이 있다는 가정 하에 작성되었습니다.)</p>
+
+<p>PRML 3.4절의 주제는 Bayesian Model Comparison이다. 3.4절에서는 굉장히 conceptual 한 내용이 나와서 한번에 이해하기 쉽지 않을 수 있지만, 3.5절에서 더 구체적 예시를 통해 설명하니 쉽게 이해가 되지 않아도 너무 걱정하지 말자.</p>
+
+<h2 id="34-bayesian-model-comparison">3.4 Bayesian Model Comparison</h2>
+
+<p>이번 절에서는 베이지안 관점에서 모델 (혹은 하이퍼파라미터)를 선택하는 방법에 대해 다룬다. 기본적으로, 모델 선택에는 Cross Validation과 같은 방법이 많이 사용되지만, 해당 방법은 Validation Set을 따로 남겨둬야해서 전체 데이터를 Training 과정에 사용할 수 없다는 단점이 있다. 반면에 Bayesian Model Comparison은 Train Set 만으로도 Model Comparison을 가능하게 해준다.</p>
+
+<p>먼저, 비교할 모델의 Set이 ${M_i}$ where $i = 1,…,L$ 로 존재한다고 하자. 여기서 각 모델은 관측된 데이터에 대한 확률분포로 해석할 수 있고, 데이터가 이 중 하나의 모델에서 생성되었지만 어떤 모델에서 나온 것인지 알 수 없는 상황이라 볼 수 있다. 이런 불확실성은 prior probability distribution $p(M_{i})$로 나타낼 수 있고 (각 모델에 대한 기본적 선호도를 나타낸다고 볼 수 있다), 주어진 데이터를 통해 posterior를 구해야할 것이다. 이때 posterior distribution은</p>
+
+\[p(M_{i}|D) \propto p(M_{i})p(D|M_{i})\]
+
+<p>으로 주어진다. 이때, 단순하게 prior는 모두 동일한 케이스를 가정하자.</p>
+
+<p>그럼, 주목해야할 항은 <em>model evidence</em> 혹은 <em>marginal likelihood</em>로 불리는 
+<span>$p(D|M_{i})$</span>
+이다. 이는 주어진 모델에 대해서 각 데이터의 확률분포를 나타낸다고 생각할 수 있다.2개 모델의 model evidence 간의 비율 
+<span>$p(D|M_{i})/p(D|M_{j})$</span>
+는 <em>Bayes Factor</em>라 불린다.</p>
+
+<p>이제 posterior distribution을 이용해서 predictive distribution</p>
+
+\[p(t|\mathbf{x},D) = \sum_{i = 1}^{L}p(t|\mathbf{x},M_{i},D)p(M_{i}|D)\]
+
+<p>을 구할 수 있다. 이는 <em>mixture distribution</em>의 일종으로, 각 모델의 posterior를 weight로 사용하여 predictive distribution을 평균낸 것으로 이해할 수 있다. 하지만 가장 쉬운 방법은 가장 가능성이 높은 모델 하나만 사용하는 것이기에 주로 <em>Model Selection</em>을 진행한다.</p>
+
+<p>다시 Model Evidence에 대한 이야기로 돌아와 모델이 parameter $\mathbf{w}$에 의해 결정되는 케이스를 생각해보자. 그렇다면 model evidence는</p>
+
+\[p(D|M_{i}) = \int p(D|\mathbf{w},M_{i})p(\mathbf{w}|M_{i})d\mathbf{w}\]
+
+<p>로 주어진다. Sampling 관점에서는 model evidence는 prior에 의해 random으로 생성된 parameter로 정의된 모델에서 해당 data set $D$를 generaete할 확률로 이해할 수 있다. 또한, parameter에 대한 posterior를 계산할 때,</p>
+
+\[p(\mathbf{w}|D,M_{i}) = \cfrac{p(D|\mathbf{w},M_{i})p(\mathbf{w}|M_i)}{p(D|M_i)}\]
+
+<p>으로 계산되기에 model evidence가 normalizing term으로 쓰인다는 것도 흥미로운 지점으로 생각할 수 있다.</p>
+
+<p>Parameter $w$에 (dimension이 1인 단순한 경우를 가정) 대한 적분을 통해 model evidence에 대한 더 흥미로운 insight를 얻을 수 있다. Parameter의 posterior distribution은 
+<span>$p(D|w)p(w)$</span> 
+에 비례하는데 (Model notation 생략), posterior 분포가 
+<span>$w_{MAP}$</span>에 굉장히 몰려있고, 그 width를 
+<span>$\triangle w_{posterior}$</span>이라 가정하자. 또한, prior가 flat한 형태에 width가 
+<span>$\triangle w_{prior}$</span>이라 가정하면 (
+<span>$p(w) = 1/\triangle w_{prior}$</span>
+),</p>
+
+\[p(D) = \int p(D|w)p(w)dw \approx p(D|w_{MAP})\cfrac{\triangle w_{posterior}}{\triangle w_{prior}}\]
+
+<p>으로 둘 수 있고, 양변에 $log$를 취하면,</p>
+
+\[ln\ p(D) \approx p(D|w_{MAP}) + ln\bigg(\cfrac{\triangle w_{posterior}}{\triangle w_{prior}}\bigg)\]
+
+<p>으로 주어진다.</p>
+
+<p><img src="/assets/img/2021-11-19-prml-스터디-chap-3-4/Figure%203.12.png" alt="" /></p>
+
+<p>첫번째 항은 가장 가능성이 높은 parameter value에 기반한 data fit을 의미하며, prior가 flat 하다면 이는 log likelihood와 동일하다. 두번째 항은 Model Complexity에 따른 penalty 항으로 이해할 수 있다. $\triangle w_{posterior} &lt; \triangle w_{prior}$ 이면 두번째 항은 negative value를 가지고, $\triangle w_{posterior} / \triangle w_{prior}$ 비율이 작아질 수록 magnitude가 커지게 된다. 즉, parameter가 posterior distribution의 데이터에 더 fitted 되어있을 수록 penalty term이 커지게 된다.</p>
+
+<p>이제 모델이 $M$개의 parameter를 가지고 있고, 모든 parameter가 동일한 $\triangle w_{posterior} / \triangle w_{prior}$ 비율을 가지고 있다고 가정하자. 그렇다면,</p>
+
+\[ln\ p(D) \approx p(D|\mathbf{w}_{MAP}) + M\ ln\bigg(\cfrac{\triangle w_{posterior}}{\triangle w_{prior}}\bigg)\]
+
+<p>으로 나타낼 수 있다. Model complexity가 높아질 수록 첫번째 항은 줄어들겠지만, 두번째 항은 M에 의존하기 때문에 더욱 커질 것이며 maximum evidence로 결정되는 optimal model complexity는 이 2개 항의 trade-off 사이에서 주어지게 된다.</p>
+
+<p>이제, marginal likleihood (model evidence)를 통해 어떻게 intermediate complexity 모델이 선택될 수 있는지 살펴보자. 아래의 그림에서 x 축은 가능한 데이터셋의 one-dimensional representation이며 특정 point는 특정한 데이터셋을 의미한다고 생각할 수 있다.</p>
+
+<p><img src="/assets/img/2021-11-19-prml-스터디-chap-3-4/Figure%203.13-01.png" alt="" /></p>
+
+<p>이제 각 Model Complexity에 따른 $p(D)$의 형태를 생각해보자. 가장 간단한 모델인 $M_1$에서 데이터가 랜덤하게 생성된다고 생각하면, 생성된 데이터셋들의 분산은 상대적으로 작을 것이며 서로 비슷한 모양을 가질 것이다. 반대로, 모델이 복잡해질 수록 생성될 수 있는 형태의 데이터셋이 다양해질 것이고, $M_3$처럼 더 Sparse 한 Distribution을 가지게 될 것이다. 이 때, 
+<span>$p(D|M_i)$</span>
+는 Normalize 되어야하기 때문에, 그림에서 처럼 특정 데이터셋 포인트에서는 intermediate complexity model의 model evidence가 가장 커질 수 있는 것이다.</p>
+
+<p>Bayesian Model Comparison의 기본적인 가정은 실제로 데이터가 현재 고려 중인 모델 중 하나에서 생성되었다는 것이다. 해당 가정이 사실이라고 했을 때, Bayesian Model Comparison은 평균적으로 correct model을 선택할 수 있게 해준다. 2개의 Model $M_1,M_2$ 가 있다고 하고, correct model이 $M_1$인 경우를 생각하자. Bayes factor를 데이터셋의 실제 분포 (correct model)로 평균을 내면</p>
+
+\[\int p(D|M_1)ln\cfrac{p(D|M_1)}{p(D|M_2)}dD\]
+
+<p>로 나타날 것이다. 이는 <em>Kullback-Leibler</em> <em>divergence</em> 의 형태로 항상 양수 값을 가지며 2개의 distribution이 동일한 경우에만 0의 값을 가진다. 즉, 평균적으로 Bayes factor는 항상 correct model을 찾아내는 것이다.</p>
+
+<p>Bayesian Model Comparison은 over-fitting 문제를 피하고 train data 만으로 비교를 가능하게 해주지만, 여전히 다른 머신러닝 문제처럼 여러 가정이 필요하고 해당 가정이 사실이 아니라면 그 결과를 믿을 수 없게 된다. 이에, 실제 문제에있어서는 test set 데이터를 따로 두고 최종 system의 performance를 체크하는 것이 현명할 것이다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#prml" class="page__taxonomy-item p-category" rel="tag">PRML</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#prml-%EC%8A%A4%ED%84%B0%EB%94%94" class="page__taxonomy-item p-category" rel="tag">PRML 스터디</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-11-19T00:00:00+09:00">November 19, 2021</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=PRML+%EC%8A%A4%ED%84%B0%EB%94%94+Chap.3.4%20http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-3-4%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-3-4%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fprml%2520%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594%2Fprml-%25EC%258A%25A4%25ED%2584%25B0%25EB%2594%2594-chap-3-4%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-3-3/" class="pagination--pager" title="PRML 스터디 Chap.3.3
+">이전</a>
+    
+    
+      <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-4-2/" class="pagination--pager" title="PRML 스터디 Chap.4.2
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-4/" rel="permalink">PRML 스터디 Chap.6.4
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">6.4.5 Gaussian processes for classification
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-6-1-2/" rel="permalink">PRML 스터디 Chap.6.1-2
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">6. Kernel Methods
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-7/" rel="permalink">PRML 스터디 Chap.5.7
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">5.5.5 Training with transformed data
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/prml%20%EC%8A%A4%ED%84%B0%EB%94%94/prml-%EC%8A%A4%ED%84%B0%EB%94%94-chap-5-4/" rel="permalink">PRML 스터디 Chap.5.4
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">5.4 The Hessian Matrix
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 cwyoon96. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+	extensions: ["tex2jax.js"],
+	jax: ["input/TeX", "output/HTML-CSS"],
+	tex2jax: {
+		inlineMath: [ ['$','$'] ],
+		processEscapes: true
+	},
+	"HTML-CSS": { availableFonts: ["TeX"] }
+});
+</script>
+
+
+  </body>
+</html>

@@ -1,0 +1,134 @@
+I"�!<h1 id="6-kernel-methods">6. Kernel Methods</h1>
+
+<p>고정된 비선형 feature space mapping을 $\phi(\mathbf{x})$라 할때, kernel function은</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \phi(\mathbf{x})^{T}\phi(\mathbf{x}')\]
+
+<p>로 정의된다. (여기서 $\mathbf{x}’$는 $\mathbf{x}^T$의 의미가 아니라 임의의 다른 vector를 의미한다.) 정의상 kernel function은 기본적으로 symmetric 하다는 것을 알 수 있다. Kernel function의 가장 간단한 형태로는 identity mapping을 이용한 linear kernel</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \mathbf{x}^{T}\mathbf{x}'\]
+
+<p>을 생각할 수 있을 것이다.</p>
+
+<p>많은 kernel들은 argument 간의 differencea만으로 정의되는 
+$k(\mathbf{x},\mathbf{x}’) = k(\mathbf{x} - \mathbf{x}’)$
+의 형태를 가지고 있는데 이를 <em>stationary kernel</em> 이라 부른다. 더 나아가 <em>radial basis functions</em>로도 알려진 <em>homogeneous</em> kernel들은 
+$k(\mathbf{x},\mathbf{x}’) = k(||\mathbf{x} - \mathbf{x}’||)$
+ 와 같이 distance의 magnitude에만 의존하는 형태를 가지고 있다. 이는 kernel function이 2개 input 간의 similarity를 재는 function으로 사용되기 때문이다.</p>
+
+<h2 id="61-dual-representations">6.1. Dual Representations</h2>
+
+<p>많은 linear model들은 kernel function으로 표현되는 dual representation을 가지고 있다. Linear regression을 예로 들자면</p>
+
+\[J(\mathbf{w}) = \cfrac{1}{2} \sum_{n=1}^{N}\{ \mathbf{w}^{T}\phi(\mathbf{x}_n) - t_n \}^2 + \cfrac{\lambda}{2}\mathbf{w}^{T}\mathbf{w}\]
+
+<p>에서 graient가 0이 되는 지점은</p>
+
+\[\mathbf{w} = -\cfrac{1}{\lambda}\sum_{n=1}^{N}\{ \mathbf{w}^{T}\phi(\mathbf{x}_n) - t_n \}\phi(\mathbf{x}_n) = \sum_{n=1}^{N}a_n\phi(\mathbf{x}_n) = \Phi^T\mathbf{a}\]
+
+<p>으로 나타낼 수 있다.</p>
+
+<p>이제 $\mathbf{w}$를 원래 sum-of-square 식에 subtitue하면</p>
+
+\[J(\mathbf{a}) = \cfrac{1}{2}\mathbf{a}^T\mathbf{K}\mathbf{K}\mathbf{a} - \mathbf{a}^{T}\mathbf{K}\mathbf{t} + \cfrac{1}{2}\mathbf{t}^{T}\mathbf{t} + \cfrac{\lambda}{2}\mathbf{a}^{T}\mathbf{K}\mathbf{a}\]
+
+<p>where</p>
+
+\[\mathbf{K} = \Phi\Phi^T \ \text{while} \ K_{nm} = k(\mathbf{x}_n,\mathbf{x}_m)\]
+
+<p>로 표현할 수 있다. (여기서 $\mathbf{K}$를 gram matrix라고 한다.)</p>
+
+<p>다시 해당 식의 gradient를 0으로 두면 solution은</p>
+
+\[\mathbf{a} = (\mathbf{K} + \lambda \mathbf{I}_N)^{-1}\mathbf{t}\]
+
+<p>로 주어진다.</p>
+
+<p>해당 solution을 linear regression model에 대입하여 new input $\mathbf{x}$에 대한 prediction을 하면</p>
+
+\[y(\mathbf{x}) = \mathbf{w}^{T}\phi(\mathbf{x}) = \mathbf{a}^{T}\Phi\phi(\mathbf{x}) = \mathbf{k}(\mathbf{x})^{T}(\mathbf{K} + \lambda\mathbf{I}_N)^{-1}\mathbf{t}\]
+
+<p>where</p>
+
+\[k_n(\mathbf{x}) = k(\mathbf{x_n},\mathbf{x}) \ \text{is element of } \mathbf{k(\mathbf{x})}\]
+
+<p>로 주어진다. 따라서 least-squares problem에 대한 dual formulation은 kernel function만을 가지고도 표현될 수 있다는 것을 알 수 있다. 이는 feature vector $\phi(\mathbf{x})$의 explicit introduction 없이도 kernel function을 직접적으로 control 하여 답을 찾을 수 있음을 의미하는데, 이를 <em>kernel trick</em>이라 한다.</p>
+
+<h2 id="62-constructing-kernels">6.2. Constructing Kernels</h2>
+
+<p>Kernel function을 직접적으로 construct하기 위해서는 해당 function이 valid한 kernel인지, 즉 feature space 상의 scalar product로 표현될 수 있는지 확인해야한다. 다행히 이를 직접 확인할 필요 없이, Gram matrix $\mathbf{K}$가 어떤 set ${\mathbf{x}_n}$을 통해 construct 하던지 poisitve semidefinite 함을 보이면 해당 kernel function은 valid kernel임이 알려져 있다.</p>
+
+<p>새로운 kernel function을 construct하는데 유용한 사실 중 하나는 간단한 형태의 kernel을 building block으로 사용하여 복잡한 kernel을 만들어 낼 수 있다는 것이다.</p>
+
+<p><img src="/assets/img/2022-03-03-prml-스터디-chap-6-1-2/Kernel_Techniques.png" alt="" /></p>
+
+<p>예를 들어 임의의 degree $M$의 polynoimal kernel</p>
+
+\[k(\mathbf{x},\mathbf{x}') = (\mathbf{x}^T \mathbf{x}' + c)^{M} \ \text{with} \ c &gt; 0\]
+
+<p>역시 위의 technique을 통해 valid kernel임을 알 수 있다.</p>
+
+<p>많이 사용되는 또 다른 kernel은</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \text{exp}(-||\mathbf{x} - \mathbf{x}'||^2/2\sigma^2)\]
+
+<p>의 형태를 가진 kernel로 ‘Gaussian kernel’로 불린다. Gaussian kernel은 infinite dimensionality를 가지는 feature vector간의 inner product와 동일함이 알려져 있어 매우 유용하게 사용된다. Gaussian kernel은 Euclidean distance에 국한되지 않고 다른 nonlinear kernel $\kappa(\mathbf{x},\mathbf{x}’)$을 이용하여</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \text{exp}\bigg\{-\cfrac{1}{2\sigma^2}(\kappa(\mathbf{x},\mathbf{x}) + \kappa(\mathbf{x}',\mathbf{x}') - 2\kappa(\mathbf{x},\mathbf{x}')) \bigg\}\]
+
+<p>의 더 복잡한 형태를 가질 수도 있다.</p>
+
+<p>Kernel method의 중요한 contribution 중 하나는 단순한 real number가 아닌 graph, sets, strings, text documents와 같은 symbolic input까지 처리 가능하다는 것이다. 예를 들어 $A_1,A_2$가 subset이라고 할 때,</p>
+
+\[k(A_1,A_2) = 2^{|A_1 \cap A_2|}\]
+
+<p>은 valid kernel function으로서 그 역할을 할 수 있다.</p>
+
+<p>Kernel을 construct하는 강력한 방식 중 하나는 probabilistic generative model에서부터 시작하는 방식이다. Generative model $p(\mathbf{x})$가 주어졌을 때, kernel function을</p>
+
+\[k(\mathbf{x},\mathbf{x}') = p(\mathbf{x})p(\mathbf{x}')\]
+
+<p>처럼 정의하면 이는 valid kernel function이다. 이를 다시 위의 technique을 이용하여</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \sum_{i}p(\mathbf{x}|i)p(\mathbf{x}'|i)p(i)\]
+
+<p>로 extend할 수 있는데, 이는 $i$가 latent variable의 역할을 하는 factorizable한 mixture distribution으로 생각할 수 있다. 여기서 sum을 무한번 한다고 생각하면 continuous한 latent variable에 대한</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \int p(\mathbf{x}|\mathbf{z})p(\mathbf{x}'|\mathbf{z})p(\mathbf{z})d\mathbf{z}\]
+
+<p>kernel function 형태을 생각할 수 있다.</p>
+
+<p>Kernel function을 define 하는데 generative model을 사용하는 또 다른 방법은 <em>Fisher kernel</em>로 알려진 방법이다. Parametric generative model 
+$p(\mathbf{x}|\boldsymbol{\theta})$
+가 있다고 했을 때, generative model에서 생성된 input vector들 간의 similarity를 재는 kernel function을 생각해보자. 이를 위해 <em>Fisher score</em></p>
+
+\[\mathbf{g}(\boldsymbol{\theta},\mathbf{x}) = \bigtriangledown_{\theta} \ ln \ p(\mathbf{x}|\boldsymbol{\theta})\]
+
+<p>와 <em>Fisher information matrix</em></p>
+
+\[\mathbf{F} = \mathbb{E}_{p(\mathbf{x}|\boldsymbol{\theta})} [\mathbf{g}(\boldsymbol{\theta},\mathbf{x})\mathbf{g}(\boldsymbol{\theta},\mathbf{x})^{T}]\]
+
+<p>를 통해 정의된 Fisher kernel</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \mathbf{g}(\boldsymbol{\theta},\mathbf{x})^T \mathbf{F}^{-1} \mathbf{g}(\boldsymbol{\theta},\mathbf{x}')\]
+
+<p>를 생각할 수 있다. Fisher kenel은 Fisher information matrix로 인해 density model의 nonlinear re-parametrization 
+$\boldsymbol{\theta} \rightarrow \boldsymbol{\psi}(\boldsymbol{\theta})$
+ 에 대해 invariant 하다는 특성을 가지고 있다.</p>
+
+<p>실제로는 Fisher information matrix를 계산하기 어렵기 때문에 sample average를 통해</p>
+
+\[\mathbf{F} \simeq \cfrac{1}{N} \sum_{n = 1}^{N}  \mathbf{g}(\boldsymbol{\theta},\mathbf{x}_n) \mathbf{g}(\boldsymbol{\theta},\mathbf{x}_n)^{T}\]
+
+<p>로 대체하거나 Fisher information matrix 자체를 생략해 noninvariant 한 kernel</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \mathbf{g}(\boldsymbol{\theta},\mathbf{x})^{T}\mathbf{g}(\boldsymbol{\theta},\mathbf{x}')\]
+
+<p>을 사용하기도 한다.</p>
+
+<p>마지막으로 소개할 kernel은 sigmoidal kernel로</p>
+
+\[k(\mathbf{x},\mathbf{x}') = \text{tanh}(a\mathbf{x}^{T}\mathbf{x}' +b)\]
+
+<p>의 형태를 가지고 있으며 Gram matrix가 보통 positive semidefinite 하지 않다. 하지만, 해당 kernel을 통해 support vector machine이 neural network model을 resemble 한다는 것을 보일 수 있기 때문에 많이 사용되고 있다. 곧 보이겠지만 basis function의 개수를 무한개로 보냈을 때, 적절한 prior를 설정하면 Bayesian neural network가 Gaussian process로 reduce 한다는 것을 보일 수 있는데, 이는 kernel method과 neural network 사이에 깊은 관계가 있음을 암시한다.</p>
+:ET
